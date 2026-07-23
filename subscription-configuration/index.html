@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self' https://bwdddngjubszavoftljo.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; upgrade-insecure-requests">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="referrer" content="no-referrer">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Curiosa Subscription Configuration</title>
+    <link rel="stylesheet" href="../site.css">
+    <script defer src="../site-i18n.js"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <script>
+        window.CURIOSA_MANAGE_CONFIG = window.CURIOSA_MANAGE_CONFIG || {
+            apiBaseUrl: "https://bwdddngjubszavoftljo.supabase.co/functions/v1/manage-subscription"
+        };
+    </script>
+
+    <header class="site-header">
+        <div class="site-header__inner site-container">
+            <span class="site-logo" aria-label="Curiosa">Curio<span>sa</span></span>
+            <nav class="site-nav" aria-label="Subscription controls">
+                <a class="site-nav__link" data-i18n href="../subscription-configuration/">Preferences</a>
+                <a class="site-nav__link" data-i18n href="../unsubscribe/">Unsubscribe</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="hero-card">
+            <p class="eyebrow" data-i18n>Curiosa Settings</p>
+            <h1 data-i18n>Manage your Curiosa subscription</h1>
+            <p class="intro" data-i18n>
+                Adjust delivery and source preferences for your Curiosa briefings.
+            </p>
+            <div id="top-actions" class="top-actions is-hidden">
+                <span id="subscription-status-pill" class="status-pill"></span>
+                <div class="top-action-buttons">
+                    <button id="unsubscribe-button" class="button button-danger is-hidden" type="button" data-i18n>Unsubscribe</button>
+                    <button id="resubscribe-button" class="button button-success-soft is-hidden" type="button" data-i18n>Resubscribe</button>
+                </div>
+            </div>
+            <div id="flow-banner" class="flow-banner is-hidden" role="status" aria-live="polite">
+                <div class="flow-banner-copy">
+                    <strong id="flow-banner-title"></strong>
+                    <p id="flow-banner-text"></p>
+                </div>
+            </div>
+            <p id="legacy-note" class="note note-warm is-hidden" data-i18n>
+                Your account is still using legacy YAML-based daily preferences. Saving here will switch you to the new
+                DB-managed settings.
+            </p>
+            <p id="status-message" class="note is-hidden" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="card">
+            <div class="card-heading">
+                <h2 data-i18n>Subscription settings</h2>
+                <p data-i18n>Choose which digests Curiosa should send you.</p>
+            </div>
+            <div class="toggle-grid">
+                <label class="toggle-card">
+                    <input type="checkbox" id="daily-enabled">
+                    <span>
+                        <strong data-i18n>Daily briefing</strong>
+                        <small data-i18n>Receive the daily Curiosa email.</small>
+                    </span>
+                </label>
+                <label class="toggle-card">
+                    <input type="checkbox" id="weekly-enabled">
+                    <span>
+                        <strong data-i18n>Weekly digest</strong>
+                        <small data-i18n>Receive the weekly Curiosa roundup.</small>
+                    </span>
+                </label>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-heading">
+                <h2 data-i18n>Sources by category</h2>
+                <p data-i18n>These source selections affect the daily briefing only.</p>
+            </div>
+            <div id="sources-root" class="sources-root"></div>
+        </section>
+
+        <section class="actions-card">
+            <button id="save-button" class="button button-primary" type="button" data-i18n>Save changes</button>
+            <button id="reset-button" class="button button-danger" type="button" data-i18n>Reset settings</button>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner site-container">
+            <div class="site-footer__brand">
+                <span class="site-footer__logo">Curio<span>sa</span></span>
+            </div>
+            <nav class="site-footer__nav" aria-label="Subscription controls">
+                <a data-i18n href="../subscription-configuration/">Preferences</a>
+                <a data-i18n href="../unsubscribe/">Unsubscribe</a>
+            </nav>
+        </div>
+        <div class="site-footer__bottom site-container">
+            <span data-i18n>Subscription controls</span>
+            <span data-i18n>No behavioral tracking</span>
+        </div>
+    </footer>
+
+    <script>
+        /* Carry the bearer token across the two subscription-control pages. */
+        (function () {
+            var token = new URLSearchParams(window.location.search).get("token");
+            if (!token) return;
+            document.querySelectorAll(
+                'a[href*="subscription-configuration/"], a[href*="unsubscribe/"]'
+            ).forEach(function (link) {
+                var url = new URL(link.getAttribute("href"), window.location.href);
+                url.searchParams.set("token", token);
+                link.setAttribute("href", url.toString());
+            });
+        })();
+    </script>
+    <script src="../app.js" defer></script>
+</body>
+</html>
