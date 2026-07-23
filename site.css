@@ -71,6 +71,21 @@ body::before {
     color: var(--site-blue);
 }
 
+/* When the logo links home (control pages), give it hover/focus affordance. */
+a.site-logo {
+    transition: opacity 0.16s ease;
+}
+
+a.site-logo:hover {
+    opacity: 0.82;
+}
+
+a.site-logo:focus-visible {
+    outline: 2px solid var(--site-blue);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
 .site-nav {
     display: flex;
     align-items: center;
@@ -321,83 +336,121 @@ body::before {
 }
 
 /* ---- Root page ------------------------------------------------------- */
-/* Minimal landing built on the 404.html aesthetic: light canvas, system
-   font. The shared brand-grid backdrop (body::before) shows through, and a
-   faint Curiosa arc mark bleeds off the top-right, echoing the email header.
-   Scoped to .home-page / .home so it never reaches the subscription-control
-   pages, which style their own body through styles.css. */
+/* Standalone dark-navy landing. Committed to a single dark look (not
+   theme-reactive) as a deliberate hero. Pure CSS — no scripts, no external
+   resources. Scoped to .home-page / .home so it never touches the
+   subscription-control pages, which style their own body through styles.css. */
 body.home-page {
     margin: 0;
     min-height: 100vh;
     overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #0f172a;
-    background: #f8fafc;
+    color: #e6edf7;
+    background:
+        radial-gradient(1100px 720px at 80% -12%, rgba(56, 110, 230, 0.30), transparent 60%),
+        radial-gradient(920px 620px at 8% 112%, rgba(46, 74, 143, 0.34), transparent 56%),
+        linear-gradient(180deg, #0a1526 0%, #0b1a32 46%, #091120 100%);
+}
+
+/* Theme-independent brand grid — overrides the shared body::before so the
+   home page shows the same grid regardless of the visitor's OS theme. */
+body.home-page::before {
+    background-image:
+        linear-gradient(90deg, rgba(140, 180, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(140, 180, 255, 0.06) 1px, transparent 1px);
+    background-size: 54px 54px;
+    -webkit-mask-image: radial-gradient(125% 92% at 50% 4%, #000 0%, rgba(0, 0, 0, 0.5) 46%, transparent 82%);
+    mask-image: radial-gradient(125% 92% at 50% 4%, #000 0%, rgba(0, 0, 0, 0.5) 46%, transparent 82%);
 }
 
 .home {
     position: relative;
+    z-index: 1;
     box-sizing: border-box;
-    width: min(960px, calc(100% - 48px));
+    width: min(720px, calc(100% - 48px));
     margin: 0 auto;
-    padding: clamp(64px, 13vh, 132px) 0 96px;
+    padding: 48px 0;
+    text-align: center;
 }
 
-/* Faint nested-C arc — the Curiosa logo mark, tinted for a light background
-   via currentColor. The light-on-dark PNG used in email headers is invisible
-   here, so the page reproduces the same motif as a self-contained vector. */
-.home__mark {
-    position: fixed;
-    top: clamp(-130px, -5vw, -56px);
-    right: clamp(-150px, -5vw, -64px);
-    width: clamp(280px, 42vw, 560px);
-    height: auto;
+/* Soft blue spotlight behind the wordmark for depth. */
+.home::before {
+    content: "";
+    position: absolute;
     z-index: -1;
-    color: var(--site-blue);
-    opacity: 0.1;
+    top: 46%;
+    left: 50%;
+    width: min(760px, 96vw);
+    height: 360px;
+    transform: translate(-50%, -58%);
+    background: radial-gradient(closest-side, rgba(64, 120, 240, 0.30), transparent 72%);
+    filter: blur(22px);
     pointer-events: none;
-    user-select: none;
+}
+
+/* The Curiosa arc mark as a glowing lockup above the wordmark. */
+.home__mark {
+    display: block;
+    width: clamp(58px, 9vw, 86px);
+    height: auto;
+    margin: 0 auto 26px;
+    color: #8ab4ff;
+    filter: drop-shadow(0 0 20px rgba(120, 160, 255, 0.55));
 }
 
 .home__title {
-    margin: 0 0 18px;
-    color: var(--site-navy);
-    font-size: clamp(40px, 6vw, 58px);
+    margin: 0 0 22px;
+    font-size: clamp(60px, 13vw, 128px);
     font-weight: 800;
-    letter-spacing: -0.01em;
-    line-height: 1;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    background: linear-gradient(180deg, #ffffff 0%, #d3e2ff 52%, #8ab4ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #d3e2ff;
 }
 
 .home__intro {
-    max-width: 620px;
-    margin: 0;
-    color: #475569;
-    font-size: 17px;
-    line-height: 1.7;
+    max-width: 540px;
+    margin: 0 auto;
+    color: #9db0cc;
+    font-size: clamp(15px, 2.2vw, 18px);
+    line-height: 1.75;
+    letter-spacing: 0.01em;
 }
 
-@media (max-width: 720px) {
-    .home {
-        padding: 56px 0 64px;
+/* Entrance polish. */
+.home__mark {
+    animation: home-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.home__title {
+    animation: home-rise 0.7s 0.06s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.home__intro {
+    animation: home-rise 0.7s 0.12s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes home-rise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    body.home-page {
-        color: #E8EDF5;
-        background: #0C111B;
-    }
-
-    .home__mark {
-        color: #8AB4FF;
-        opacity: 0.14;
-    }
-
-    .home__title {
-        color: #E8EDF5;
-    }
-
+@media (prefers-reduced-motion: reduce) {
+    .home__mark,
+    .home__title,
     .home__intro {
-        color: #A9B4C6;
+        animation: none;
     }
 }
