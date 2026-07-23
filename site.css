@@ -1,0 +1,321 @@
+/* Curiosa-Web — shared site chrome (header / footer / layout container).
+   Self-contained: does not depend on per-page :root tokens, so it can be
+   loaded by pages that style their body with inline CSS, styles.css, or
+   subscribe.css without collisions. */
+
+:root {
+    --site-navy: #1e2d45;
+    --site-navy-deep: #14233b;
+    --site-blue: #1e3a8a;
+}
+
+/* ---- Site-wide backdrop ---------------------------------------------- */
+/* Subtle fixed brand-blue grid, fading out toward the lower half of the
+   viewport. Sits behind all content on every page that loads site.css. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(90deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.35) 45%, transparent 78%);
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.35) 45%, transparent 78%);
+}
+
+/* ---- Layout container ------------------------------------------------ */
+/* Header/footer bars span the full viewport width; this container keeps
+   their content (and page content) in a centered, readable column. */
+.site-container {
+    width: min(1080px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+.site-container--wide {
+    width: min(1320px, calc(100% - 48px));
+}
+
+/* ---- Header ---------------------------------------------------------- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.9);
+    background: rgba(248, 250, 252, 0.9);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+.site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 64px;
+}
+
+.site-logo {
+    flex-shrink: 0;
+    color: var(--site-navy);
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+}
+
+.site-logo span {
+    color: var(--site-blue);
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    border: 1px solid var(--site-line, #dbe4ef);
+    border-radius: 999px;
+    padding: 3px;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.lang-toggle__option {
+    border: 0;
+    border-radius: 999px;
+    padding: 5px 10px;
+    background: transparent;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+}
+
+.lang-toggle__option.is-active {
+    background: #eef3ff;
+    color: var(--site-blue, #1e3a8a);
+    box-shadow: inset 0 0 0 1px #d8deea;
+    cursor: default;
+}
+
+.site-nav__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 8px 15px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: #374151;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.site-nav__link:hover {
+    color: var(--site-blue);
+    background: rgba(30, 58, 138, 0.07);
+}
+
+.site-nav__link:focus-visible {
+    outline: 2px solid var(--site-blue);
+    outline-offset: 2px;
+}
+
+.nav-button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.site-nav__link--primary {
+    color: #ffffff;
+    background: var(--site-navy);
+    border-color: var(--site-navy);
+}
+
+.site-nav__link--primary:hover {
+    color: #ffffff;
+    background: var(--site-blue);
+}
+
+/* ---- Footer ---------------------------------------------------------- */
+.site-footer {
+    margin-top: 56px;
+    background: var(--site-navy-deep);
+    color: #aeb9cc;
+}
+
+.site-footer__inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 38px 0 26px;
+}
+
+.site-footer__brand {
+    max-width: 340px;
+}
+
+.site-footer__logo {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.site-footer__logo span {
+    color: #7d93c4;
+}
+
+.site-footer__tagline {
+    margin: 10px 0 0;
+    color: #9aa6bd;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.site-footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+}
+
+.site-footer__nav a {
+    color: #cdd6e6;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.16s ease;
+}
+
+.site-footer__nav a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.site-footer__nav a:focus-visible {
+    outline: 2px solid #7d93c4;
+    outline-offset: 2px;
+}
+
+.site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 20px;
+    padding: 16px 0 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    color: #8593ab;
+    font-size: 12.5px;
+}
+
+/* ---- Responsive ------------------------------------------------------ */
+@media (max-width: 640px) {
+    .site-header__inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 0;
+    }
+
+    .site-nav {
+        justify-content: flex-start;
+    }
+
+    .site-footer__inner {
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .site-footer__bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-nav__link,
+    .site-footer__nav a {
+        transition: none;
+    }
+}
+
+/* ---- Dark theme (follows the OS preference) -------------------------- */
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+
+    body::before {
+        background-image:
+            linear-gradient(90deg, rgba(143, 177, 255, 0.055) 1px, transparent 1px),
+            linear-gradient(0deg, rgba(143, 177, 255, 0.055) 1px, transparent 1px);
+    }
+
+    .site-header {
+        border-bottom-color: rgba(42, 51, 72, 0.9);
+        background: rgba(13, 18, 28, 0.88);
+    }
+
+    .site-logo {
+        color: #E8EDF5;
+    }
+
+    .site-logo span {
+        color: #8AB4FF;
+    }
+
+    .site-nav__link {
+        color: #C3CCD9;
+    }
+
+    .site-nav__link:hover {
+        color: #A9C4FF;
+        background: rgba(138, 180, 255, 0.09);
+    }
+
+    .site-nav__link:focus-visible {
+        outline-color: #8AB4FF;
+    }
+
+    .site-nav__link--primary {
+        color: #ffffff;
+        background: #2E4A8F;
+        border-color: #2E4A8F;
+    }
+
+    .site-nav__link--primary:hover {
+        background: #3B5CB0;
+    }
+
+    .lang-toggle {
+        border-color: #2E3A52;
+        background: rgba(22, 31, 48, 0.7);
+    }
+
+    .lang-toggle__option {
+        color: #93A1B5;
+    }
+
+    .lang-toggle__option.is-active {
+        background: #24304A;
+        color: #A9C4FF;
+        box-shadow: inset 0 0 0 1px #354361;
+    }
+}
