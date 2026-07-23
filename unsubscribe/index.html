@@ -16,12 +16,12 @@
     <link rel="stylesheet" href="../styles.css">
     <style>
         .unsubscribe-shell {
-            width: min(680px, calc(100% - 32px));
-            margin: 48px auto;
+            width: min(600px, calc(100% - 32px));
+            margin: 40px auto 48px;
         }
 
         .unsubscribe-card {
-            padding: 28px;
+            padding: 24px;
         }
 
         .unsubscribe-status-row {
@@ -29,17 +29,17 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            margin: 20px 0 0;
-            padding: 14px;
-            border: 1px solid rgba(30, 58, 138, 0.12);
-            border-radius: 12px;
-            background: rgba(248, 250, 252, 0.74);
+            margin: 18px 0 0;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--panel-2);
         }
 
         .unsubscribe-status-label {
             margin: 0;
             color: var(--muted);
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
         }
 
@@ -47,13 +47,14 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin: 22px 0 0;
+            margin: 20px 0 0;
         }
 
         .unsubscribe-actions .button-danger:not(:disabled) {
-            background: #b23a52;
             color: #ffffff;
-            box-shadow: 0 12px 24px rgba(120, 30, 50, 0.4);
+            background: #c23a55;
+            border-color: #c23a55;
+            box-shadow: 0 10px 22px rgba(120, 30, 50, 0.4);
         }
 
         .unsubscribe-actions .button-secondary:disabled {
@@ -64,40 +65,40 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-            margin: 20px 0 0;
-            padding-top: 18px;
+            margin: 18px 0 0;
+            padding-top: 16px;
             border-top: 1px solid var(--line);
         }
 
         .unsubscribe-link {
-            color: var(--brand-blue);
-            font-size: 14px;
+            color: var(--blue);
+            font-size: 13.5px;
             font-weight: 700;
             text-decoration: underline;
             text-underline-offset: 3px;
         }
 
         .unsubscribe-note {
-            margin-top: 18px;
+            margin-top: 16px;
             color: var(--muted);
-            font-size: 14px;
+            font-size: 13.5px;
             line-height: 1.55;
         }
 
         .status-pill-neutral {
-            color: #C3CCD9;
-            background: rgba(30, 41, 59, 0.9);
-            border-color: rgba(147, 161, 181, 0.24);
+            color: #C9D3E3;
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--line-strong);
         }
 
         @media (max-width: 640px) {
             .unsubscribe-shell {
-                width: min(100% - 20px, 680px);
-                margin: 24px auto;
+                width: min(100% - 20px, 600px);
+                margin: 22px auto 32px;
             }
 
             .unsubscribe-card {
-                padding: 22px 18px;
+                padding: 20px 16px;
             }
 
             .unsubscribe-status-row,
