@@ -17,7 +17,7 @@
     <style>
         .unsubscribe-shell {
             width: min(600px, calc(100% - 32px));
-            margin: 40px auto 48px;
+            margin: 44px auto 52px;
         }
 
         .unsubscribe-card {
@@ -52,9 +52,14 @@
 
         .unsubscribe-actions .button-danger:not(:disabled) {
             color: #ffffff;
-            background: #c23a55;
-            border-color: #c23a55;
-            box-shadow: 0 10px 22px rgba(120, 30, 50, 0.4);
+            background: #B3261E;
+            border-color: #B3261E;
+            box-shadow: 0 6px 16px rgba(179, 38, 30, 0.22);
+        }
+
+        .unsubscribe-actions .button-danger:not(:disabled):hover {
+            background: #C22F26;
+            border-color: #C22F26;
         }
 
         .unsubscribe-actions .button-secondary:disabled {
@@ -78,6 +83,10 @@
             text-underline-offset: 3px;
         }
 
+        .unsubscribe-link:hover {
+            color: var(--blue-solid);
+        }
+
         .unsubscribe-note {
             margin-top: 16px;
             color: var(--muted);
@@ -86,8 +95,8 @@
         }
 
         .status-pill-neutral {
-            color: #C9D3E3;
-            background: rgba(255, 255, 255, 0.06);
+            color: #4A5872;
+            background: #EEF1F7;
             border-color: var(--line-strong);
         }
 

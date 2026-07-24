@@ -1,28 +1,43 @@
-/* Curiosa subscription-control pages — dark UI.
+/* Curiosa subscription-control pages — light UI.
    styles.css is loaded only by /subscription-configuration/ and /unsubscribe/,
-   so it ships a single committed dark theme that matches the site root: a deep
-   navy canvas with soft glow and a faint brand grid, crisp low-radius panels,
-   and high-contrast type. There is no OS light/dark split. */
+   so it ships a single committed light theme: a soft off-white canvas with a
+   faint brand grid, crisp white panels, and dark-navy header/footer chrome that
+   frames the page. There is no OS light/dark split — the rules below also
+   neutralize site.css's prefers-color-scheme block, which styles.css outranks
+   by load order. */
 
 :root {
-    color-scheme: dark;
+    color-scheme: light;
 
-    --canvas: #0a1526;
-    --panel: #141d30;
-    --panel-2: #111a2c;
-    --line: rgba(146, 172, 214, 0.16);
-    --line-strong: rgba(146, 172, 214, 0.28);
+    --canvas: #F4F6FA;
+    --panel: #FFFFFF;
+    --panel-2: #F7F9FC;
+    --line: #E3E9F2;
+    --line-strong: #D2DBE8;
 
-    --text: #EAF1FB;
-    --text-2: #C2CDE0;
-    --muted: #96A2B9;
+    --text: #142238;
+    --text-2: #3C4A63;
+    --muted: #63718B;
 
-    --blue: #8FB6FF;
-    --blue-solid: #3B62C9;
-    --blue-solid-hover: #4A72DC;
-    --orange: #F4B98A;
-    --green: #7EE6AA;
-    --red: #F4A6B0;
+    --blue: #22509E;
+    --blue-solid: #1E3A8A;
+    --blue-solid-hover: #274CAB;
+    --blue-tint: #EDF3FF;
+    --blue-tint-line: #CFDDF7;
+
+    --orange: #A8580C;
+    --orange-tint: #FDF4E8;
+    --orange-tint-line: #EFD8B4;
+
+    --green: #15803D;
+    --green-tint: #E9F7EF;
+    --green-tint-line: #B4DEC5;
+
+    --red: #B3261E;
+    --red-tint: #FDECEB;
+    --red-tint-line: #F3C6C2;
+
+    --shadow-card: 0 1px 2px rgba(16, 32, 64, 0.05), 0 14px 30px -22px rgba(16, 32, 64, 0.35);
 
     --radius-card: 10px;
     --radius: 8px;
@@ -37,6 +52,9 @@
 
 body {
     margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     color: var(--text);
     background: var(--canvas);
@@ -44,7 +62,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Viewport-anchored glow pools behind everything (below the grid). */
+/* Viewport-anchored tint pools behind everything (below the grid). */
 body::after {
     content: "";
     position: fixed;
@@ -52,32 +70,34 @@ body::after {
     z-index: -2;
     pointer-events: none;
     background:
-        radial-gradient(1000px 680px at 84% -16%, rgba(56, 110, 230, 0.20), transparent 60%),
-        radial-gradient(820px 600px at 4% 118%, rgba(46, 74, 143, 0.22), transparent 56%);
+        radial-gradient(1000px 680px at 84% -16%, rgba(30, 58, 138, 0.07), transparent 62%),
+        radial-gradient(820px 600px at 4% 118%, rgba(30, 58, 138, 0.05), transparent 58%);
 }
 
-/* Faint brand grid, fading toward the lower half. Overrides site.css. */
+/* Faint brand grid, fading toward the lower half. Overrides site.css so the
+   grid stays navy-on-light even when the OS prefers dark. */
 body::before {
     background-image:
-        linear-gradient(90deg, rgba(140, 180, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(140, 180, 255, 0.05) 1px, transparent 1px);
+        linear-gradient(90deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px);
     background-size: 56px 56px;
-    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 44%, transparent 78%);
-    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 44%, transparent 78%);
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 46%, transparent 78%);
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 46%, transparent 78%);
 }
 
-/* ---- Header chrome (force dark; site.css gates its dark styling by OS). --- */
+/* ---- Header chrome (force dark navy; site.css gates its dark styling by OS). */
 .site-header {
-    border-bottom-color: rgba(42, 51, 72, 0.9);
-    background: rgba(10, 16, 27, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(20, 35, 59, 0.94);
+    box-shadow: 0 1px 14px rgba(16, 32, 64, 0.18);
 }
 
 .site-logo {
-    background: linear-gradient(180deg, #ffffff 0%, #d7e4ff 52%, #8fb6ff 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #d7e4ff 55%, #9dbcff 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    color: #d7e4ff;
+    color: #dbe6ff;
 }
 
 .site-logo span {
@@ -86,37 +106,46 @@ body::before {
 }
 
 .site-nav__link {
-    color: #C9D3E3;
+    color: #C4D0E4;
 }
 
 .site-nav__link:hover {
-    color: #EAF1FB;
-    background: rgba(143, 182, 255, 0.1);
+    color: #FFFFFF;
+    background: rgba(157, 188, 255, 0.14);
 }
 
 .site-nav__link:focus-visible {
-    outline-color: var(--blue);
+    outline-color: #9DBCFF;
 }
 
 .lang-toggle {
-    border-color: rgba(146, 172, 214, 0.22);
-    background: rgba(20, 29, 48, 0.7);
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .lang-toggle__option {
-    color: #9AA7BD;
+    color: #A9B6CC;
 }
 
 .lang-toggle__option.is-active {
-    background: rgba(59, 98, 201, 0.24);
-    color: #CFE0FF;
-    box-shadow: inset 0 0 0 1px rgba(143, 182, 255, 0.3);
+    background: rgba(157, 188, 255, 0.18);
+    color: #E4EDFF;
+    box-shadow: inset 0 0 0 1px rgba(157, 188, 255, 0.32);
 }
 
 /* ---- Shell ------------------------------------------------------------ */
 .page-shell {
     width: min(880px, calc(100% - 40px));
-    margin: 22px auto 44px;
+    margin: 26px auto 48px;
+}
+
+/* Keep the dark footer pinned to the bottom on short pages. */
+main {
+    flex: 1 0 auto;
+}
+
+.site-footer {
+    flex-shrink: 0;
 }
 
 /* ---- Surfaces --------------------------------------------------------- */
@@ -127,13 +156,13 @@ body::before {
     border: 1px solid var(--line);
     border-radius: var(--radius-card);
     background: var(--panel);
+    box-shadow: var(--shadow-card);
 }
 
 .hero-card {
     overflow: hidden;
     padding: 22px 22px 20px;
     margin-bottom: 14px;
-    border-color: var(--line-strong);
 }
 
 /* Thin brand accent along the top edge of the hero. */
@@ -142,7 +171,7 @@ body::before {
     position: absolute;
     inset: 0 0 auto;
     height: 2px;
-    background: linear-gradient(90deg, #6f9bff 0%, rgba(111, 155, 255, 0.35) 60%, rgba(244, 185, 138, 0.32) 100%);
+    background: linear-gradient(90deg, #1E3A8A 0%, rgba(30, 58, 138, 0.4) 60%, rgba(168, 88, 12, 0.4) 100%);
 }
 
 .card {
@@ -156,7 +185,6 @@ body::before {
     align-items: center;
     flex-wrap: wrap;
     padding: 14px 16px;
-    border-color: var(--line-strong);
 }
 
 /* ---- Type ------------------------------------------------------------- */
@@ -165,14 +193,14 @@ body::before {
     align-items: center;
     margin: 0 0 12px;
     padding: 4px 9px;
-    border: 1px solid rgba(143, 182, 255, 0.22);
+    border: 1px solid var(--blue-tint-line);
     border-radius: 6px;
     font-size: 10.5px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-weight: 700;
     color: var(--blue);
-    background: rgba(59, 98, 201, 0.12);
+    background: var(--blue-tint);
 }
 
 h1 {
@@ -244,25 +272,25 @@ h2 {
 
 .status-pill-active {
     color: var(--green);
-    background: rgba(46, 160, 100, 0.16);
-    border-color: rgba(126, 230, 170, 0.28);
+    background: var(--green-tint);
+    border-color: var(--green-tint-line);
 }
 
 .status-pill-inactive {
     color: var(--red);
-    background: rgba(190, 60, 80, 0.18);
-    border-color: rgba(244, 166, 176, 0.26);
+    background: var(--red-tint);
+    border-color: var(--red-tint-line);
 }
 
 .note {
     margin: 12px 0 0;
     padding: 11px 13px;
-    border: 1px solid rgba(143, 182, 255, 0.18);
+    border: 1px solid var(--blue-tint-line);
     border-radius: var(--radius);
     font-size: 13.5px;
     line-height: 1.5;
-    color: #CFE0FF;
-    background: rgba(59, 98, 201, 0.12);
+    color: #1F3566;
+    background: var(--blue-tint);
 }
 
 .note.is-hidden {
@@ -270,9 +298,9 @@ h2 {
 }
 
 .note-warm {
-    border-color: rgba(244, 185, 138, 0.24);
-    background: rgba(120, 70, 30, 0.22);
-    color: #F6CBA2;
+    border-color: var(--orange-tint-line);
+    background: var(--orange-tint);
+    color: #8A4B0B;
 }
 
 .is-hidden {
@@ -310,22 +338,22 @@ h2 {
 }
 
 .flow-banner-warm {
-    border-color: rgba(244, 185, 138, 0.26);
-    background: rgba(120, 70, 30, 0.2);
+    border-color: var(--orange-tint-line);
+    background: var(--orange-tint);
 }
 
 .flow-banner-warm .flow-banner-copy p {
-    color: #F6CBA2;
+    color: #8A4B0B;
     background: transparent;
 }
 
 .flow-banner-success {
-    border-color: rgba(126, 230, 170, 0.26);
-    background: rgba(30, 90, 60, 0.22);
+    border-color: var(--green-tint-line);
+    background: var(--green-tint);
 }
 
 .flow-banner-success .flow-banner-copy p {
-    color: #A6ECC6;
+    color: #146334;
 }
 
 /* ---- Delivery toggles ------------------------------------------------- */
@@ -353,7 +381,7 @@ h2 {
     margin-top: 1px;
     width: 20px;
     height: 20px;
-    accent-color: var(--blue);
+    accent-color: var(--blue-solid);
 }
 
 .toggle-card > span,
@@ -416,7 +444,7 @@ h2 {
 }
 
 .category-card-authorities {
-    border-color: rgba(244, 185, 138, 0.22);
+    border-color: var(--orange-tint-line);
 }
 
 .category-card-authorities::before {
@@ -424,7 +452,7 @@ h2 {
     position: absolute;
     inset: 0 0 auto;
     height: 2px;
-    background: linear-gradient(90deg, rgba(244, 185, 138, 0.6), rgba(244, 185, 138, 0.16) 70%, transparent);
+    background: linear-gradient(90deg, rgba(168, 88, 12, 0.75), rgba(168, 88, 12, 0.22) 70%, transparent);
 }
 
 .category-card-authorities .category-title {
@@ -442,7 +470,7 @@ h2 {
     padding: 5px 10px;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--panel);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -458,7 +486,7 @@ h2 {
 }
 
 .category-action:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: #F0F4FA;
 }
 
 .sources-grid {
@@ -470,13 +498,14 @@ h2 {
 .source-card {
     padding: 10px 12px;
     align-items: center;
+    background: var(--panel);
 }
 
 .source-card input {
     flex: 0 0 auto;
     width: 17px;
     height: 17px;
-    accent-color: var(--blue);
+    accent-color: var(--blue-solid);
 }
 
 .source-title-row {
@@ -513,40 +542,40 @@ h2 {
 }
 
 .pill-format {
-    color: #A9C4FF;
-    background: rgba(59, 98, 201, 0.16);
-    border-color: rgba(143, 182, 255, 0.22);
+    color: var(--blue);
+    background: var(--blue-tint);
+    border-color: var(--blue-tint-line);
 }
 
 .pill-authorities {
     color: var(--orange);
-    background: rgba(120, 70, 30, 0.26);
-    border-color: rgba(244, 185, 138, 0.22);
+    background: var(--orange-tint);
+    border-color: var(--orange-tint-line);
 }
 
 /* Selected-state emphasis. */
 .toggle-card input:checked + span strong {
-    color: var(--blue);
+    color: var(--blue-solid);
 }
 
 .source-card input:checked + span .source-name {
-    color: #CFE0FF;
+    color: var(--blue-solid);
 }
 
 .category-card-authorities .source-card input:checked + span .source-name {
-    color: #F6CBA2;
+    color: var(--orange);
 }
 
 @supports selector(:has(*)) {
     .toggle-card:has(input:checked),
     .source-card:has(input:checked) {
-        border-color: rgba(143, 182, 255, 0.4);
-        background: rgba(59, 98, 201, 0.14);
+        border-color: #A9C1EE;
+        background: var(--blue-tint);
     }
 
     .category-card-authorities .source-card:has(input:checked) {
-        border-color: rgba(244, 185, 138, 0.34);
-        background: rgba(120, 70, 30, 0.2);
+        border-color: #E5C08A;
+        background: var(--orange-tint);
     }
 }
 
@@ -564,36 +593,37 @@ h2 {
 
 .button:disabled {
     cursor: not-allowed;
-    opacity: 0.55;
+    opacity: 0.5;
 }
 
 .button-primary {
     color: #ffffff;
     background: var(--blue-solid);
     border-color: var(--blue-solid);
-    box-shadow: 0 8px 20px rgba(30, 50, 120, 0.4);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.22);
 }
 
 .button-success {
-    color: #08130d;
+    color: #ffffff;
     background: var(--green);
+    border-color: var(--green);
 }
 
 .button-success-soft {
-    color: #A6ECC6;
-    background: rgba(30, 90, 60, 0.28);
-    border-color: rgba(126, 230, 170, 0.3);
+    color: var(--green);
+    background: var(--green-tint);
+    border-color: var(--green-tint-line);
 }
 
 .button-danger {
     color: var(--red);
-    background: rgba(190, 60, 80, 0.18);
-    border-color: rgba(244, 166, 176, 0.3);
+    background: var(--red-tint);
+    border-color: var(--red-tint-line);
 }
 
 .button-secondary {
-    color: #C9D3E3;
-    background: rgba(255, 255, 255, 0.05);
+    color: #33415C;
+    background: var(--panel);
     border-color: var(--line-strong);
 }
 
@@ -609,7 +639,7 @@ h2 {
     }
 
     .category-action:hover {
-        border-color: rgba(143, 182, 255, 0.3);
+        border-color: #B9C7DC;
     }
 
     .button:not(:disabled):hover {
@@ -618,6 +648,11 @@ h2 {
 
     .button-primary:not(:disabled):hover {
         background: var(--blue-solid-hover);
+        border-color: var(--blue-solid-hover);
+    }
+
+    .button-secondary:not(:disabled):hover {
+        background: #F0F4FA;
     }
 }
 
