@@ -26,7 +26,7 @@
         <div class="site-header__inner site-container">
             <a class="site-logo" href="/" aria-label="Curiosa">Curio<span>sa</span></a>
             <nav class="site-nav" aria-label="Subscription controls">
-                <a class="site-nav__link" data-i18n href="../subscription-configuration/">Preferences</a>
+                <a class="site-nav__link is-current" aria-current="page" data-i18n href="../subscription-configuration/">Preferences</a>
                 <a class="site-nav__link" data-i18n href="../unsubscribe/">Unsubscribe</a>
             </nav>
         </div>
@@ -59,42 +59,100 @@
             <p id="status-message" class="note is-hidden" role="status" aria-live="polite"></p>
         </section>
 
-        <section class="card">
-            <div class="card-heading">
-                <h2 data-i18n>Subscription settings</h2>
-                <p data-i18n>Choose which digests Curiosa should send you.</p>
-            </div>
-            <div class="toggle-grid">
-                <label class="toggle-card">
-                    <input type="checkbox" id="daily-enabled">
-                    <span>
-                        <strong data-i18n>Daily briefing</strong>
-                        <small data-i18n>Receive the daily Curiosa email.</small>
-                    </span>
-                </label>
-                <label class="toggle-card">
-                    <input type="checkbox" id="weekly-enabled">
-                    <span>
-                        <strong data-i18n>Weekly digest</strong>
-                        <small data-i18n>Receive the weekly Curiosa roundup.</small>
-                    </span>
-                </label>
-            </div>
-        </section>
+        <div class="settings-layout">
+            <aside class="summary-rail">
+                <div class="summary-card">
+                    <h2 data-i18n>Your subscription</h2>
+                    <dl class="summary-list">
+                        <div class="summary-row">
+                            <dt data-i18n>Daily briefing</dt>
+                            <dd id="summary-daily">—</dd>
+                        </div>
+                        <div class="summary-row">
+                            <dt data-i18n>Weekly digest</dt>
+                            <dd id="summary-weekly">—</dd>
+                        </div>
+                        <div class="summary-row">
+                            <dt data-i18n>Sources</dt>
+                            <dd id="summary-sources">—</dd>
+                        </div>
+                    </dl>
+                    <p class="summary-hint" data-i18n>
+                        Changes take effect with the next briefing. Nothing is saved until you use Save changes.
+                    </p>
+                </div>
+            </aside>
 
-        <section class="card">
-            <div class="card-heading">
-                <h2 data-i18n>Sources by category</h2>
-                <p data-i18n>These source selections affect the daily briefing only.</p>
-            </div>
-            <div id="sources-root" class="sources-root"></div>
-        </section>
+            <div class="settings-main">
+                <section class="card">
+                    <div class="card-heading">
+                        <h2 data-i18n>Subscription settings</h2>
+                        <p data-i18n>Choose which digests Curiosa should send you.</p>
+                    </div>
+                    <div class="toggle-grid">
+                        <label class="toggle-card">
+                            <input type="checkbox" id="daily-enabled">
+                            <span class="toggle-copy">
+                                <strong data-i18n>Daily briefing</strong>
+                                <small data-i18n>Receive the daily Curiosa email.</small>
+                            </span>
+                            <span class="switch" aria-hidden="true"></span>
+                        </label>
+                        <label class="toggle-card">
+                            <input type="checkbox" id="weekly-enabled">
+                            <span class="toggle-copy">
+                                <strong data-i18n>Weekly digest</strong>
+                                <small data-i18n>Receive the weekly Curiosa roundup.</small>
+                            </span>
+                            <span class="switch" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </section>
 
-        <section class="actions-card">
-            <button id="save-button" class="button button-primary" type="button" data-i18n>Save changes</button>
-            <button id="reset-button" class="button button-danger" type="button" data-i18n>Reset settings</button>
-        </section>
+                <section class="card">
+                    <div class="card-heading">
+                        <h2 data-i18n>Sources by category</h2>
+                        <p data-i18n>These source selections affect the daily briefing only.</p>
+                    </div>
+
+                    <div class="mode-switch" role="radiogroup" aria-label="Source mode">
+                        <label class="mode-option">
+                            <input type="radio" name="source-mode" id="source-mode-all" value="all">
+                            <span>
+                                <strong data-i18n>All sources</strong>
+                                <small data-i18n>Everything Curiosa tracks, including sources added later.</small>
+                            </span>
+                        </label>
+                        <label class="mode-option">
+                            <input type="radio" name="source-mode" id="source-mode-custom" value="custom">
+                            <span>
+                                <strong data-i18n>Choose sources</strong>
+                                <small data-i18n>Only the sources you tick below.</small>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="filter-row">
+                        <input type="search" id="source-filter" class="filter-input" autocomplete="off" data-i18n-placeholder placeholder="Filter sources by name">
+                        <span id="filter-count" class="filter-count"></span>
+                    </div>
+
+                    <div id="sources-root" class="sources-root"></div>
+                </section>
+            </div>
+        </div>
     </main>
+
+    <div id="action-bar" class="action-bar">
+        <div class="action-bar__inner">
+            <span id="action-bar-note" class="action-bar__note" role="status" aria-live="polite"></span>
+            <div class="action-bar__buttons">
+                <button id="reset-button" class="button button-secondary" type="button" data-i18n>Reset settings</button>
+                <button id="discard-button" class="button button-secondary is-hidden" type="button" data-i18n>Discard changes</button>
+                <button id="save-button" class="button button-primary" type="button" disabled data-i18n>Save changes</button>
+            </div>
+        </div>
+    </div>
 
     <footer class="site-footer">
         <div class="site-footer__inner site-container">

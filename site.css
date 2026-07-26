@@ -370,9 +370,12 @@ body.home-page::before {
     position: relative;
     z-index: 1;
     box-sizing: border-box;
-    width: min(720px, calc(100% - 48px));
+    width: 100%;
     margin: 0 auto;
-    padding: 48px 0;
+    padding: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
 }
 
@@ -381,11 +384,11 @@ body.home-page::before {
     content: "";
     position: absolute;
     z-index: -1;
-    top: 46%;
+    top: 50%;
     left: 50%;
     width: min(760px, 96vw);
     height: 360px;
-    transform: translate(-50%, -58%);
+    transform: translate(-50%, -50%);
     background: radial-gradient(closest-side, rgba(64, 120, 240, 0.30), transparent 72%);
     filter: blur(22px);
     pointer-events: none;
@@ -394,16 +397,16 @@ body.home-page::before {
 /* The Curiosa arc mark as a glowing lockup above the wordmark. */
 .home__mark {
     display: block;
-    width: clamp(58px, 9vw, 86px);
+    width: clamp(52px, 7vw, 74px);
     height: auto;
-    margin: 0 auto 26px;
+    margin: 0 auto 18px;
     color: #8ab4ff;
     filter: drop-shadow(0 0 20px rgba(120, 160, 255, 0.55));
 }
 
 .home__title {
-    margin: 0 0 22px;
-    font-size: clamp(60px, 13vw, 128px);
+    margin: 0 0 16px;
+    font-size: clamp(52px, 9vw, 104px);
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 0.95;
@@ -415,11 +418,11 @@ body.home-page::before {
 }
 
 .home__intro {
-    max-width: 540px;
+    max-width: 400px;
     margin: 0 auto;
     color: #9db0cc;
-    font-size: clamp(15px, 2.2vw, 18px);
-    line-height: 1.75;
+    font-size: clamp(14px, 1.6vw, 16px);
+    line-height: 1.7;
     letter-spacing: 0.01em;
 }
 
@@ -447,10 +450,367 @@ body.home-page::before {
     }
 }
 
+/* ---- Orbit field ------------------------------------------------------ */
+/* Capability bubbles drift around the wordmark on three tilted elliptical
+   rings. Pure CSS: the root page CSP allows no scripts, so every orbit
+   parameter lives here and is selected per ring / per arm.
+
+   Transform chain per bubble (outermost first):
+       .orbit__ring   rotate(tilt) scaleY(k)        the orbital plane
+       .orbit__spin   rotate(t)                     the animation
+       .orbit__arm    rotate(a) translateX(r)       the seat on the ring
+       .orbit__node   rotate(-t)                    cancels the spin
+       .orbit__bubble rotate(-a) scaleY(1/k) rotate(-tilt) translate(-50%,-50%)
+
+   2-D rotations commute, so every rotation between scaleY(k) and scaleY(1/k)
+   cancels out and the bubble renders as an undistorted, upright circle while
+   its position still traces the tilted ellipse. The un-squash has to be the
+   innermost scale, and the centering translate has to sit after it — that is
+   why the order above cannot be shuffled. */
+/* --field is the full box the outermost bubble may reach, so radii are derived
+   from (field - bubble) and the widest arm jitter (1.06) lands exactly on the
+   edge. Anything looser overflows into body's clipped horizontal overflow. */
+.orbit {
+    --field: min(1300px, 96vw, 138vh);
+    position: relative;
+    width: var(--field);
+    height: calc(var(--field) * 0.535 + 100px);
+}
+
+.orbit__core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    width: min(430px, 78%);
+    transform: translate(-50%, -50%);
+}
+
+/* Bubbles pass behind the wordmark rather than through it: this pool of page
+   background sits under the core and fades them out as they cross. */
+.orbit__core::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    width: 152%;
+    height: 300px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, rgba(9, 20, 38, 0.94) 0%, rgba(9, 20, 38, 0.78) 52%, rgba(9, 20, 38, 0) 100%);
+    pointer-events: none;
+}
+
+.orbit__ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    z-index: 1;
+    transform: rotate(var(--tilt)) scaleY(var(--k));
+}
+
+.orbit__spin,
+.orbit__arm,
+.orbit__node {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.orbit__spin {
+    animation: orbit-spin var(--dur) linear infinite;
+    animation-direction: var(--dir);
+}
+
+.orbit__arm {
+    transform: rotate(var(--a)) translateX(var(--r));
+}
+
+/* The counter-spin runs at the ring's duration in the opposite direction, so
+   the bubble stays upright; the drift rides on the separate translate
+   property and therefore does not fight the transform animation. */
+.orbit__node {
+    animation-name: orbit-spin, orbit-drift;
+    animation-duration: var(--dur), var(--drift);
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+    animation-direction: var(--dir-rev), alternate;
+}
+
+/* Comet trail: it lives on the arm, which is not counter-rotated, so it stays
+   tangential to the orbit and always points back along the direction of
+   travel. */
+.orbit__arm::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    width: calc(var(--size) * 0.26);
+    height: calc(var(--size) * 2.4);
+    border-radius: 50%;
+    background: linear-gradient(to top, rgba(150, 190, 255, 0) 8%, rgba(150, 190, 255, 0.42) 26%, rgba(138, 180, 255, 0.11) 56%, transparent 82%);
+    transform: translate(-50%, -88%);
+    filter: blur(3px);
+    pointer-events: none;
+}
+
+/* Rings that spin backwards trail from the other side. */
+.orbit__ring--2 .orbit__arm::after {
+    background: linear-gradient(to bottom, rgba(150, 190, 255, 0) 8%, rgba(150, 190, 255, 0.42) 26%, rgba(138, 180, 255, 0.11) 56%, transparent 82%);
+    transform: translate(-50%, -12%);
+}
+
+.orbit__bubble {
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: var(--size);
+    height: var(--size);
+    padding: 9% 11%;
+    border: 1px solid rgba(138, 180, 255, 0.26);
+    border-radius: 50%;
+    background: radial-gradient(120% 120% at 30% 22%, rgba(120, 165, 255, 0.22), rgba(11, 26, 50, 0.78) 62%);
+    box-shadow:
+        0 14px 34px -18px rgba(4, 10, 22, 0.95),
+        0 0 26px -6px rgba(96, 140, 235, 0.30);
+    color: #cfdcf5;
+    text-align: center;
+    transform: rotate(calc(-1 * var(--a))) scaleY(var(--ik)) rotate(calc(-1 * var(--tilt))) translate(-50%, -50%);
+    transition:
+        width 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+        height 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+        border-color 0.3s ease,
+        background 0.3s ease,
+        box-shadow 0.3s ease;
+    cursor: default;
+}
+
+.orbit__bubble:focus-visible {
+    outline: none;
+}
+
+.orbit__label {
+    display: block;
+    font-size: var(--label);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.005em;
+    color: #e2ecff;
+    hyphens: auto;
+    overflow-wrap: break-word;
+    transition: font-size 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.orbit__text {
+    display: block;
+    overflow: hidden;
+    max-height: 0;
+    margin-top: 0;
+    opacity: 0;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #a8bcdf;
+    transition:
+        max-height 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+        margin-top 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+        opacity 0.22s ease;
+}
+
+/* Expand on hover or keyboard focus. The whole field pauses while a bubble is
+   open — otherwise it drifts out from under the pointer mid-sentence. */
+.orbit__bubble:hover,
+.orbit__bubble:focus-visible {
+    --size: var(--size-open);
+    --label: 15.5px;
+    border-color: rgba(150, 190, 255, 0.55);
+    background: radial-gradient(120% 120% at 30% 20%, rgba(126, 170, 255, 0.26), rgba(12, 28, 54, 0.94) 60%);
+    box-shadow:
+        0 22px 50px -20px rgba(4, 10, 22, 0.95),
+        0 0 46px -4px rgba(110, 155, 245, 0.45);
+}
+
+.orbit__bubble:hover .orbit__text,
+.orbit__bubble:focus-visible .orbit__text {
+    max-height: 10em;
+    margin-top: 8px;
+    opacity: 1;
+}
+
+.orbit:hover .orbit__spin,
+.orbit:hover .orbit__node,
+.orbit:focus-within .orbit__spin,
+.orbit:focus-within .orbit__node {
+    animation-play-state: paused;
+}
+
+.orbit__ring:has(.orbit__bubble:hover),
+.orbit__ring:has(.orbit__bubble:focus-visible) {
+    z-index: 3;
+}
+
+@keyframes orbit-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes orbit-drift {
+    from {
+        translate: 0 0;
+    }
+    to {
+        translate: 9px -13px;
+    }
+}
+
+/* ---- Ring parameters -------------------------------------------------- */
+/* --ik is 1 / --k; the two are kept as an explicit pair so the un-squash is
+   readable next to the squash it undoes. Durations are deliberately
+   non-multiples: the three rings never resynchronise, which is what makes the
+   field read as drifting rather than as a clock. */
+.orbit__ring--1 {
+    --tilt: -12deg;
+    --k: 0.52;
+    --ik: 1.9231;
+    --rr: calc((var(--field) - 116px) * 0.244);
+    --dur: 68s;
+    --dir: normal;
+    --dir-rev: reverse;
+    --size: 116px;
+    --size-open: 244px;
+    --label: 12px;
+}
+
+.orbit__ring--2 {
+    --tilt: 9deg;
+    --k: 0.56;
+    --ik: 1.7857;
+    --rr: calc((var(--field) - 108px) * 0.358);
+    --dur: 92s;
+    --dir: reverse;
+    --dir-rev: normal;
+    --size: 108px;
+    --size-open: 238px;
+    --label: 11.5px;
+}
+
+.orbit__ring--3 {
+    --tilt: -5deg;
+    --k: 0.585;
+    --ik: 1.7094;
+    --rr: calc((var(--field) - 100px) * 0.472);
+    --dur: 124s;
+    --dir: normal;
+    --dir-rev: reverse;
+    --size: 100px;
+    --size-open: 232px;
+    --label: 11px;
+}
+
+/* ---- Seats ------------------------------------------------------------ */
+/* Angles are spread unevenly and the radii carry a few percent of jitter, so
+   no ring ever looks like a dial. */
+.orbit__ring--1 .orbit__arm:nth-child(1) { --a: 12deg;  --r: calc(var(--rr) * 1.00); --drift: 15s; }
+.orbit__ring--1 .orbit__arm:nth-child(2) { --a: 157deg; --r: calc(var(--rr) * 0.92); --drift: 19s; }
+.orbit__ring--1 .orbit__arm:nth-child(3) { --a: 254deg; --r: calc(var(--rr) * 1.06); --drift: 23s; }
+
+.orbit__ring--2 .orbit__arm:nth-child(1) { --a: 38deg;  --r: calc(var(--rr) * 1.02); --drift: 17s; }
+.orbit__ring--2 .orbit__arm:nth-child(2) { --a: 98deg;  --r: calc(var(--rr) * 0.94); --drift: 21s; }
+.orbit__ring--2 .orbit__arm:nth-child(3) { --a: 206deg; --r: calc(var(--rr) * 1.05); --drift: 14s; }
+.orbit__ring--2 .orbit__arm:nth-child(4) { --a: 345deg; --r: calc(var(--rr) * 0.97); --drift: 25s; }
+
+.orbit__ring--3 .orbit__arm:nth-child(1) { --a: 6deg;   --r: calc(var(--rr) * 1.00); --drift: 22s; }
+.orbit__ring--3 .orbit__arm:nth-child(2) { --a: 76deg;  --r: calc(var(--rr) * 0.95); --drift: 16s; }
+.orbit__ring--3 .orbit__arm:nth-child(3) { --a: 116deg; --r: calc(var(--rr) * 1.04); --drift: 26s; }
+.orbit__ring--3 .orbit__arm:nth-child(4) { --a: 182deg; --r: calc(var(--rr) * 0.98); --drift: 18s; }
+.orbit__ring--3 .orbit__arm:nth-child(5) { --a: 241deg; --r: calc(var(--rr) * 1.06); --drift: 24s; }
+.orbit__ring--3 .orbit__arm:nth-child(6) { --a: 305deg; --r: calc(var(--rr) * 0.93); --drift: 20s; }
+
+/* ---- Static fallback -------------------------------------------------- */
+/* Narrow viewports have no hover, and the root page cannot ship a tap handler
+   under its CSP — so below the breakpoint (and whenever motion is reduced)
+   the same markup collapses into a plain readable card grid. */
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+    .home {
+        padding: 32px 0;
+    }
+
+    .orbit {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
+        gap: 10px;
+        width: min(920px, 100%);
+        height: auto;
+    }
+
+    .orbit__ring,
+    .orbit__spin,
+    .orbit__arm,
+    .orbit__node {
+        display: contents;
+    }
+
+    .orbit__core {
+        position: static;
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-bottom: 22px;
+        transform: none;
+    }
+
+    /* The orbit-only decorations still generate boxes here, so switch them off
+       explicitly: display:contents on the arm does not suppress its ::after. */
+    .orbit__core::before,
+    .orbit__arm::after {
+        display: none;
+    }
+
+    .orbit__bubble {
+        position: static;
+        display: block;
+        width: auto;
+        height: auto;
+        padding: 13px 15px;
+        border-radius: 12px;
+        text-align: left;
+        transform: none;
+        transition: none;
+    }
+
+    .orbit__label {
+        font-size: 13px;
+    }
+
+    .orbit__text {
+        max-height: none;
+        margin-top: 5px;
+        opacity: 1;
+        font-size: 12.5px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .home__mark,
     .home__title,
     .home__intro {
+        animation: none;
+    }
+
+    .orbit__spin,
+    .orbit__node {
         animation: none;
     }
 }
