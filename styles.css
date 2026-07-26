@@ -4,7 +4,8 @@
    faint brand grid, crisp white panels, and dark-navy header/footer chrome that
    frames the page. There is no OS light/dark split — the rules below also
    neutralize site.css's prefers-color-scheme block, which styles.css outranks
-   by load order. */
+   by load order. Long checkbox lists are the whole point of these pages, and
+   they stay far more legible on light. */
 
 :root {
     color-scheme: light;
@@ -38,9 +39,11 @@
     --red-tint-line: #F3C6C2;
 
     --shadow-card: 0 1px 2px rgba(16, 32, 64, 0.05), 0 14px 30px -22px rgba(16, 32, 64, 0.35);
+    --shadow-bar: 0 -1px 0 rgba(16, 32, 64, 0.07), 0 -12px 30px -20px rgba(16, 32, 64, 0.45);
 
-    --radius-card: 10px;
-    --radius: 8px;
+    --radius-card: 12px;
+    --radius: 9px;
+    --radius-sm: 7px;
 
     /* Kept for compatibility with any shared references. */
     --brand-blue: var(--blue);
@@ -118,6 +121,12 @@ body::before {
     outline-color: #9DBCFF;
 }
 
+.site-nav__link.is-current {
+    color: #FFFFFF;
+    background: rgba(157, 188, 255, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(157, 188, 255, 0.28);
+}
+
 .lang-toggle {
     border-color: rgba(255, 255, 255, 0.16);
     background: rgba(255, 255, 255, 0.06);
@@ -135,8 +144,10 @@ body::before {
 
 /* ---- Shell ------------------------------------------------------------ */
 .page-shell {
-    width: min(880px, calc(100% - 40px));
-    margin: 26px auto 48px;
+    width: min(1080px, calc(100% - 40px));
+    margin: 28px auto 0;
+    /* Room for the fixed action bar so the last card is never trapped under it. */
+    padding-bottom: 104px;
 }
 
 /* Keep the dark footer pinned to the bottom on short pages. */
@@ -151,6 +162,7 @@ main {
 /* ---- Surfaces --------------------------------------------------------- */
 .hero-card,
 .card,
+.summary-card,
 .actions-card {
     position: relative;
     border: 1px solid var(--line);
@@ -161,8 +173,8 @@ main {
 
 .hero-card {
     overflow: hidden;
-    padding: 22px 22px 20px;
-    margin-bottom: 14px;
+    padding: 24px 24px 22px;
+    margin-bottom: 16px;
 }
 
 /* Thin brand accent along the top edge of the hero. */
@@ -175,8 +187,12 @@ main {
 }
 
 .card {
-    padding: 16px 18px;
-    margin-bottom: 14px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+}
+
+.card:last-child {
+    margin-bottom: 0;
 }
 
 .actions-card {
@@ -185,6 +201,70 @@ main {
     align-items: center;
     flex-wrap: wrap;
     padding: 14px 16px;
+}
+
+/* ---- Two-column settings layout --------------------------------------- */
+.settings-layout {
+    display: grid;
+    grid-template-columns: 268px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.summary-rail {
+    position: sticky;
+    top: 84px;
+}
+
+.summary-card {
+    padding: 18px 18px 16px;
+}
+
+.summary-card h2 {
+    margin-bottom: 12px;
+}
+
+.summary-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.summary-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--panel-2);
+}
+
+.summary-row dt {
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.summary-row dd {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: right;
+}
+
+.summary-row dd.is-off {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.summary-hint {
+    margin: 12px 0 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--muted);
 }
 
 /* ---- Type ------------------------------------------------------------- */
@@ -205,35 +285,35 @@ main {
 
 h1 {
     margin: 0 0 10px;
-    font-size: clamp(23px, 3vw, 29px);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
+    font-size: clamp(24px, 3vw, 31px);
+    line-height: 1.14;
+    letter-spacing: -0.022em;
     font-weight: 700;
     color: var(--text);
 }
 
 h2 {
     margin: 0;
-    font-size: 16px;
+    font-size: 16.5px;
     font-weight: 700;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.012em;
     color: var(--text);
 }
 
 .intro {
     margin: 0;
-    max-width: 54ch;
-    font-size: 14.5px;
-    line-height: 1.6;
+    max-width: 56ch;
+    font-size: 15px;
+    line-height: 1.62;
     color: var(--text-2);
 }
 
 .card-heading {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .card-heading p {
-    margin: 4px 0 0;
+    margin: 5px 0 0;
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--muted);
@@ -245,8 +325,8 @@ h2 {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin: 16px 0 0;
-    padding: 10px 12px;
+    margin: 18px 0 0;
+    padding: 11px 13px;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--panel-2);
@@ -262,12 +342,21 @@ h2 {
 .status-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
+    gap: 7px;
+    padding: 5px 12px;
     border: 1px solid transparent;
     border-radius: 999px;
     font-size: 12.5px;
     font-weight: 700;
+}
+
+/* Small state dot so the pill reads at a glance, not only by colour. */
+.status-pill::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
 }
 
 .status-pill-active {
@@ -280,6 +369,12 @@ h2 {
     color: var(--red);
     background: var(--red-tint);
     border-color: var(--red-tint-line);
+}
+
+.status-pill-neutral {
+    color: #4A5872;
+    background: #EEF1F7;
+    border-color: var(--line-strong);
 }
 
 .note {
@@ -301,6 +396,12 @@ h2 {
     border-color: var(--orange-tint-line);
     background: var(--orange-tint);
     color: #8A4B0B;
+}
+
+.note-success {
+    border-color: var(--green-tint-line);
+    background: var(--green-tint);
+    color: #146334;
 }
 
 .is-hidden {
@@ -359,14 +460,106 @@ h2 {
 /* ---- Delivery toggles ------------------------------------------------- */
 .toggle-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 10px;
 }
 
-.toggle-card,
-.source-card {
+.toggle-card {
     display: flex;
-    gap: 12px;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+/* The native checkbox stays in the DOM (it is what app.js reads and posts);
+   the visible control is the switch drawn next to it. */
+.toggle-card input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toggle-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+.toggle-card strong {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 14.5px;
+    color: var(--text);
+}
+
+.toggle-card small,
+.source-card small {
+    display: block;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.45;
+}
+
+.switch {
+    flex: 0 0 auto;
+    position: relative;
+    width: 42px;
+    height: 24px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: #E7ECF4;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(16, 32, 64, 0.3);
+    transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.toggle-card input:checked ~ .switch {
+    background: var(--blue-solid);
+    border-color: var(--blue-solid);
+}
+
+.toggle-card input:checked ~ .switch::after {
+    transform: translateX(18px);
+}
+
+.toggle-card input:focus-visible ~ .switch {
+    outline: 2px solid var(--blue-solid);
+    outline-offset: 2px;
+}
+
+.toggle-card:has(input:checked) {
+    border-color: #A9C1EE;
+    background: var(--blue-tint);
+}
+
+/* ---- Source mode ------------------------------------------------------ */
+.mode-switch {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.mode-option {
+    display: flex;
+    gap: 11px;
     align-items: flex-start;
     padding: 12px 13px;
     border: 1px solid var(--line);
@@ -376,38 +569,85 @@ h2 {
     transition: border-color 0.16s ease, background 0.16s ease;
 }
 
-.toggle-card input {
+.mode-option input {
     flex: 0 0 auto;
-    margin-top: 1px;
-    width: 20px;
-    height: 20px;
+    margin: 1px 0 0;
+    width: 17px;
+    height: 17px;
     accent-color: var(--blue-solid);
 }
 
-.toggle-card > span,
-.source-card > span {
-    min-width: 0;
-    flex: 1;
-}
-
-.toggle-card strong {
+.mode-option strong {
     display: block;
     margin-bottom: 2px;
-    font-size: 14px;
+    font-size: 13.5px;
     color: var(--text);
 }
 
-.toggle-card small,
-.source-card small {
+.mode-option small {
+    display: block;
     color: var(--muted);
     font-size: 12.5px;
     line-height: 1.45;
 }
 
+.mode-option:has(input:checked) {
+    border-color: #A9C1EE;
+    background: var(--blue-tint);
+}
+
+.mode-option:has(input:checked) strong {
+    color: var(--blue-solid);
+}
+
+/* ---- Source filter ---------------------------------------------------- */
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.filter-input {
+    flex: 1;
+    min-width: 0;
+    appearance: none;
+    padding: 9px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13.5px;
+}
+
+.filter-input::placeholder {
+    color: #94A1B7;
+}
+
+.filter-input:focus-visible {
+    outline: 2px solid var(--blue-solid);
+    outline-offset: 1px;
+    border-color: var(--blue-solid);
+}
+
+.filter-count {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
 /* ---- Sources by category ---------------------------------------------- */
 .sources-root {
     display: grid;
-    gap: 14px;
+    gap: 12px;
+}
+
+/* When every source is implied, the list stays visible but reads as inert. */
+.sources-root.is-locked {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .category-card {
@@ -415,7 +655,6 @@ h2 {
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 14px 15px;
     background: var(--panel-2);
 }
 
@@ -424,7 +663,40 @@ h2 {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 4px;
+    padding: 12px 14px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.category-header::-webkit-details-marker {
+    display: none;
+}
+
+.category-header:focus-visible {
+    outline: 2px solid var(--blue-solid);
+    outline-offset: -2px;
+}
+
+.category-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+}
+
+/* Disclosure caret, rotated by the open state of the surrounding details. */
+.category-caret {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(-45deg);
+    transition: transform 0.18s ease;
+}
+
+.category-card[open] .category-caret {
+    transform: rotate(45deg);
 }
 
 .category-card h3,
@@ -434,6 +706,28 @@ h2 {
     font-weight: 700;
     letter-spacing: 0.01em;
     color: var(--text);
+}
+
+.category-count {
+    flex: 0 0 auto;
+    padding: 2px 9px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.category-count.is-full {
+    color: var(--blue);
+    background: var(--blue-tint);
+    border-color: var(--blue-tint-line);
+}
+
+.category-body {
+    padding: 0 14px 14px;
 }
 
 .category-card p {
@@ -459,18 +753,26 @@ h2 {
     color: var(--orange);
 }
 
+.category-card-authorities .category-count.is-full {
+    color: var(--orange);
+    background: var(--orange-tint);
+    border-color: var(--orange-tint-line);
+}
+
 .category-actions {
     display: inline-flex;
     gap: 6px;
     flex-wrap: wrap;
+    margin-bottom: 12px;
 }
 
 .category-action {
     appearance: none;
-    padding: 5px 10px;
+    padding: 5px 11px;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
     background: var(--panel);
+    font-family: inherit;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -489,16 +791,31 @@ h2 {
     background: #F0F4FA;
 }
 
+.category-action:focus-visible {
+    outline: 2px solid var(--blue-solid);
+    outline-offset: 1px;
+}
+
 .sources-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
+    gap: 7px;
 }
 
 .source-card {
-    padding: 10px 12px;
+    display: flex;
+    gap: 11px;
     align-items: center;
+    padding: 9px 11px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
     background: var(--panel);
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.source-card.is-filtered-out {
+    display: none;
 }
 
 .source-card input {
@@ -508,11 +825,18 @@ h2 {
     accent-color: var(--blue-solid);
 }
 
+.source-card > span {
+    min-width: 0;
+    flex: 1;
+}
+
+/* Name first, badges under it: side by side, a long source name and two pills
+   fight over the same 230px column and both end up wrapping. */
 .source-title-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
     font-weight: 600;
 }
 
@@ -553,11 +877,17 @@ h2 {
     border-color: var(--orange-tint-line);
 }
 
-/* Selected-state emphasis. */
-.toggle-card input:checked + span strong {
-    color: var(--blue-solid);
+.empty-note {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
 }
 
+/* Selected-state emphasis. */
 .source-card input:checked + span .source-name {
     color: var(--blue-solid);
 }
@@ -567,7 +897,6 @@ h2 {
 }
 
 @supports selector(:has(*)) {
-    .toggle-card:has(input:checked),
     .source-card:has(input:checked) {
         border-color: #A9C1EE;
         background: var(--blue-tint);
@@ -580,13 +909,21 @@ h2 {
 }
 
 /* ---- Buttons ---------------------------------------------------------- */
+/* Anchors carry .button too (the unsubscribe page's "adjust preferences"
+   action is a link), so the base rule has to work for both elements. */
 .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     appearance: none;
     border: 1px solid transparent;
     border-radius: var(--radius);
-    padding: 9px 15px;
+    padding: 10px 16px;
+    font-family: inherit;
     font-size: 13.5px;
     font-weight: 700;
+    line-height: 1.3;
+    text-decoration: none;
     cursor: pointer;
     transition: transform 0.14s ease, background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
@@ -594,6 +931,11 @@ h2 {
 .button:disabled {
     cursor: not-allowed;
     opacity: 0.5;
+}
+
+.button:focus-visible {
+    outline: 2px solid var(--blue-solid);
+    outline-offset: 2px;
 }
 
 .button-primary {
@@ -627,14 +969,186 @@ h2 {
     border-color: var(--line-strong);
 }
 
+.button-quiet {
+    color: var(--muted);
+    background: transparent;
+    border-color: transparent;
+    padding: 10px 12px;
+}
+
+.button-quiet:hover {
+    color: var(--text);
+    background: #EDF1F7;
+}
+
 .actions-card .button-primary {
     min-width: 150px;
+}
+
+/* ---- Sticky action bar ------------------------------------------------ */
+/* Fixed rather than sticky: the settings column is long, and the bar has to
+   stay reachable from the middle of the source list, not only at its end. */
+.action-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    border-top: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-bar);
+}
+
+.action-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: min(1080px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 12px 0;
+}
+
+.action-bar__note {
+    min-width: 0;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.action-bar.is-dirty {
+    border-top-color: var(--blue-tint-line);
+    background: rgba(240, 245, 255, 0.96);
+}
+
+.action-bar.is-dirty .action-bar__note {
+    color: var(--blue);
+    font-weight: 700;
+}
+
+.action-bar__buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ---- Unsubscribe page ------------------------------------------------- */
+.unsubscribe-shell {
+    width: min(620px, calc(100% - 32px));
+    margin: 44px auto 52px;
+}
+
+.unsubscribe-card {
+    padding: 26px;
+}
+
+.unsubscribe-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 20px 0 0;
+    padding: 13px 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+}
+
+.unsubscribe-status-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 700;
+}
+
+.consequence-list {
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 7px;
+}
+
+.consequence-list li {
+    position: relative;
+    padding-left: 22px;
+    color: var(--text-2);
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+.consequence-list li::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--line-strong);
+}
+
+.unsubscribe-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 22px 0 0;
+}
+
+/* Leaving is a two-step action, so the first step stays quiet: the loud
+   button on this page is the one that keeps the subscription. */
+.unsubscribe-actions .button-danger-outline {
+    color: var(--red);
+    background: transparent;
+    border-color: var(--red-tint-line);
+}
+
+.unsubscribe-actions .button-danger-outline:not(:disabled):hover {
+    background: var(--red-tint);
+}
+
+.confirm-box {
+    margin: 20px 0 0;
+    padding: 15px 16px;
+    border: 1px solid var(--red-tint-line);
+    border-radius: var(--radius);
+    background: var(--red-tint);
+}
+
+.confirm-box p {
+    margin: 0 0 12px;
+    color: #8A2018;
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.confirm-actions .button-danger:not(:disabled) {
+    color: #ffffff;
+    background: #B3261E;
+    border-color: #B3261E;
+    box-shadow: 0 6px 16px rgba(179, 38, 30, 0.22);
+}
+
+.confirm-actions .button-danger:not(:disabled):hover {
+    background: #C22F26;
+    border-color: #C22F26;
 }
 
 /* ---- Interaction / responsive ---------------------------------------- */
 @media (hover: hover) {
     .toggle-card:hover,
-    .source-card:hover {
+    .source-card:hover,
+    .mode-option:hover {
         border-color: var(--line-strong);
     }
 
@@ -660,15 +1174,30 @@ h2 {
     .button,
     .toggle-card,
     .source-card,
-    .category-action {
+    .mode-option,
+    .category-action,
+    .category-caret,
+    .switch,
+    .switch::after {
         transition: none;
+    }
+}
+
+@media (max-width: 1000px) {
+    .settings-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .summary-rail {
+        position: static;
     }
 }
 
 @media (max-width: 640px) {
     .page-shell {
-        width: min(100% - 20px, 880px);
+        width: min(100% - 20px, 1080px);
         margin-top: 18px;
+        padding-bottom: 128px;
     }
 
     .hero-card {
@@ -676,8 +1205,9 @@ h2 {
     }
 
     .card,
+    .summary-card,
     .actions-card {
-        padding: 14px;
+        padding: 16px 14px;
     }
 
     .actions-card,
@@ -687,8 +1217,7 @@ h2 {
     }
 
     .category-header {
-        align-items: flex-start;
-        flex-direction: column;
+        flex-wrap: wrap;
     }
 
     .source-title-row {
@@ -698,6 +1227,37 @@ h2 {
     }
 
     .flow-banner {
+        flex-direction: column;
+    }
+
+    .action-bar__inner {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+        width: min(100% - 20px, 1080px);
+    }
+
+    .action-bar__buttons {
+        justify-content: stretch;
+    }
+
+    .action-bar__buttons .button {
+        flex: 1;
+    }
+
+    .unsubscribe-shell {
+        width: min(100% - 20px, 620px);
+        margin: 22px auto 32px;
+    }
+
+    .unsubscribe-card {
+        padding: 20px 16px;
+    }
+
+    .unsubscribe-status-row,
+    .unsubscribe-actions,
+    .confirm-actions {
+        align-items: stretch;
         flex-direction: column;
     }
 }

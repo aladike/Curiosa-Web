@@ -15,6 +15,10 @@
         categories: [],
         allSourceIds: [],
         dbPreferencesEnabled: false,
+        /* Snapshot of the last saved form state; everything that differs from
+           it is what the action bar calls unsaved. */
+        baseline: null,
+        loaded: false,
     };
 
     const INCOMPLETE_LINK_MESSAGE =
@@ -43,26 +47,44 @@
     const sourcesRoot = document.getElementById("sources-root");
     const saveButton = document.getElementById("save-button");
     const resetButton = document.getElementById("reset-button");
+    const discardButton = document.getElementById("discard-button");
+    const actionBar = document.getElementById("action-bar");
+    const actionBarNote = document.getElementById("action-bar-note");
+    const modeAllRadio = document.getElementById("source-mode-all");
+    const modeCustomRadio = document.getElementById("source-mode-custom");
+    const sourceFilter = document.getElementById("source-filter");
+    const filterCount = document.getElementById("filter-count");
+    const summaryDaily = document.getElementById("summary-daily");
+    const summaryWeekly = document.getElementById("summary-weekly");
+    const summarySources = document.getElementById("summary-sources");
 
     function setStatus(message, tone) {
         statusMessage.textContent = message || "";
         statusMessage.classList.toggle("is-hidden", !message);
         statusMessage.classList.toggle("note-warm", tone === "warm");
+        statusMessage.classList.toggle("note-success", tone === "success");
     }
 
     function setBusy(isBusy) {
-        saveButton.disabled = isBusy;
+        state.busy = isBusy;
         resetButton.disabled = isBusy;
         unsubscribeButton.disabled = isBusy;
         resubscribeButton.disabled = isBusy;
+        saveButton.disabled = isBusy || !isDirty();
+        discardButton.disabled = isBusy;
     }
 
     function showFatal(message) {
         setStatus(message, "warm");
         saveButton.disabled = true;
         resetButton.disabled = true;
+        discardButton.disabled = true;
         dailyCheckbox.disabled = true;
         weeklyCheckbox.disabled = true;
+        modeAllRadio.disabled = true;
+        modeCustomRadio.disabled = true;
+        sourceFilter.disabled = true;
+        actionBarNote.textContent = "";
     }
 
     function buildUnsubscribeApiUrl(action) {
@@ -179,6 +201,8 @@
         return normalizedCategories;
     }
 
+    /* ---- Source list ---------------------------------------------------- */
+
     function renderSources(categories, selectedSourceIds) {
         const selectedSet = selectedSourceIds === null
             ? new Set(state.allSourceIds)
@@ -186,18 +210,38 @@
 
         sourcesRoot.innerHTML = "";
         categories.forEach((category) => {
-            const wrapper = document.createElement("section");
+            const wrapper = document.createElement("details");
             wrapper.className = "category-card";
+            wrapper.open = true;
             if (category.id === "authorities") {
                 wrapper.classList.add("category-card-authorities");
             }
 
-            const header = document.createElement("div");
+            const header = document.createElement("summary");
             header.className = "category-header";
+
+            const headingWrap = document.createElement("span");
+            headingWrap.className = "category-heading";
+
+            const caret = document.createElement("span");
+            caret.className = "category-caret";
+            caret.setAttribute("aria-hidden", "true");
 
             const heading = document.createElement("h3");
             heading.className = "category-title";
-            heading.textContent = category.label;
+            /* Category labels come from the backend catalog in English. */
+            heading.textContent = curT(category.label);
+
+            const count = document.createElement("span");
+            count.className = "category-count";
+
+            headingWrap.appendChild(caret);
+            headingWrap.appendChild(heading);
+            header.appendChild(headingWrap);
+            header.appendChild(count);
+
+            const body = document.createElement("div");
+            body.className = "category-body";
 
             const actions = document.createElement("div");
             actions.className = "category-actions";
@@ -212,20 +256,19 @@
             clearAllButton.className = "category-action category-action-clear";
             clearAllButton.textContent = curT("Clear all");
 
-            const description = document.createElement("p");
-            description.textContent = `${category.sources.length} available sources`;
-
             const grid = document.createElement("div");
             grid.className = "sources-grid";
 
             category.sources.forEach((source) => {
                 const label = document.createElement("label");
                 label.className = "source-card";
+                label.dataset.name = String(source.label || "").toLowerCase();
 
                 const checkbox = document.createElement("input");
                 checkbox.type = "checkbox";
                 checkbox.value = String(source.id);
                 checkbox.checked = selectedSet.has(source.id);
+                checkbox.addEventListener("change", onSelectionChanged);
 
                 const textWrap = document.createElement("span");
                 const titleRow = document.createElement("strong");
@@ -261,34 +304,201 @@
 
             function setCategorySelection(isChecked) {
                 grid.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+                    if (input.closest(".source-card").classList.contains("is-filtered-out")) {
+                        return;
+                    }
                     input.checked = isChecked;
                 });
+                onSelectionChanged();
             }
 
-            selectAllButton.addEventListener("click", () => setCategorySelection(true));
-            clearAllButton.addEventListener("click", () => setCategorySelection(false));
+            /* The buttons sit inside <summary>, which would otherwise toggle the
+               disclosure on every click. */
+            function runCategoryAction(event, isChecked) {
+                event.preventDefault();
+                event.stopPropagation();
+                setCategorySelection(isChecked);
+            }
+
+            selectAllButton.addEventListener("click", (event) => runCategoryAction(event, true));
+            clearAllButton.addEventListener("click", (event) => runCategoryAction(event, false));
 
             actions.appendChild(selectAllButton);
             actions.appendChild(clearAllButton);
-            header.appendChild(heading);
-            header.appendChild(actions);
+            body.appendChild(actions);
+            body.appendChild(grid);
 
             wrapper.appendChild(header);
-            wrapper.appendChild(description);
-            wrapper.appendChild(grid);
+            wrapper.appendChild(body);
             sourcesRoot.appendChild(wrapper);
+        });
+
+        applyFilter();
+        updateCategoryCounts();
+    }
+
+    function updateCategoryCounts() {
+        sourcesRoot.querySelectorAll(".category-card").forEach((card) => {
+            const inputs = card.querySelectorAll('input[type="checkbox"]');
+            const checked = card.querySelectorAll('input[type="checkbox"]:checked');
+            const badge = card.querySelector(".category-count");
+            if (!badge) {
+                return;
+            }
+            badge.textContent = `${checked.length} / ${inputs.length}`;
+            badge.classList.toggle("is-full", inputs.length > 0 && checked.length === inputs.length);
         });
     }
 
-    function collectSelectedSourceIds() {
-        const checked = Array.from(
+    function applyFilter() {
+        const term = sourceFilter.value.trim().toLowerCase();
+        let visible = 0;
+
+        sourcesRoot.querySelectorAll(".category-card").forEach((card) => {
+            let cardVisible = 0;
+            card.querySelectorAll(".source-card").forEach((sourceCard) => {
+                const matches = !term || (sourceCard.dataset.name || "").includes(term);
+                sourceCard.classList.toggle("is-filtered-out", !matches);
+                if (matches) {
+                    cardVisible += 1;
+                }
+            });
+            card.classList.toggle("is-hidden", term !== "" && cardVisible === 0);
+            if (term) {
+                card.open = cardVisible > 0;
+            }
+            visible += cardVisible;
+        });
+
+        if (!term) {
+            filterCount.textContent = "";
+            return;
+        }
+        filterCount.textContent = `${visible} / ${state.allSourceIds.length}`;
+    }
+
+    /* ---- Form state ------------------------------------------------------ */
+
+    function currentMode() {
+        return modeCustomRadio.checked ? "custom" : "all";
+    }
+
+    function checkedSourceIds() {
+        return Array.from(
             sourcesRoot.querySelectorAll('input[type="checkbox"]:checked'),
         ).map((input) => Number(input.value)).sort((a, b) => a - b);
+    }
 
-        if (checked.length === state.allSourceIds.length) {
+    function collectSelectedSourceIds() {
+        if (currentMode() === "all") {
             return null;
         }
-        return checked;
+        return checkedSourceIds();
+    }
+
+    function formSignature() {
+        return JSON.stringify({
+            daily: dailyCheckbox.checked,
+            weekly: weeklyCheckbox.checked,
+            mode: currentMode(),
+            sources: currentMode() === "all" ? null : checkedSourceIds(),
+        });
+    }
+
+    function captureBaseline() {
+        state.baseline = formSignature();
+    }
+
+    function isDirty() {
+        return state.loaded && state.baseline !== null && state.baseline !== formSignature();
+    }
+
+    function updateSummary() {
+        const on = curT("On");
+        const off = curT("Off");
+        summaryDaily.textContent = dailyCheckbox.checked ? on : off;
+        summaryDaily.classList.toggle("is-off", !dailyCheckbox.checked);
+        summaryWeekly.textContent = weeklyCheckbox.checked ? on : off;
+        summaryWeekly.classList.toggle("is-off", !weeklyCheckbox.checked);
+
+        const total = state.allSourceIds.length;
+        if (currentMode() === "all") {
+            summarySources.textContent = curT("All sources");
+            summarySources.classList.remove("is-off");
+            return;
+        }
+        const selected = checkedSourceIds().length;
+        summarySources.textContent = `${selected} / ${total}`;
+        summarySources.classList.toggle("is-off", selected === 0);
+    }
+
+    function updateActionBar() {
+        const dirty = isDirty();
+        actionBar.classList.toggle("is-dirty", dirty);
+        discardButton.classList.toggle("is-hidden", !dirty);
+        saveButton.disabled = Boolean(state.busy) || !dirty;
+        if (!state.loaded) {
+            actionBarNote.textContent = "";
+            return;
+        }
+        actionBarNote.textContent = dirty
+            ? curT("You have unsaved changes.")
+            : curT("All changes saved.");
+    }
+
+    function applySourceMode() {
+        const isAll = currentMode() === "all";
+        sourcesRoot.classList.toggle("is-locked", isAll);
+        sourceFilter.disabled = isAll;
+        if (isAll) {
+            sourcesRoot.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+                input.checked = true;
+            });
+            updateCategoryCounts();
+        }
+    }
+
+    function onSelectionChanged() {
+        updateCategoryCounts();
+        updateSummary();
+        updateActionBar();
+    }
+
+    function setSelection(ids) {
+        const wanted = new Set(ids);
+        sourcesRoot.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+            input.checked = wanted.has(Number(input.value));
+        });
+    }
+
+    /* Switching to "all sources" ticks everything, which would otherwise erase a
+       carefully built selection the moment the radio is touched. Park it and
+       hand it back when the user returns to "choose sources". */
+    function onModeChanged() {
+        if (currentMode() === "all") {
+            state.lastCustomSelection = checkedSourceIds();
+        } else if (state.lastCustomSelection) {
+            setSelection(state.lastCustomSelection);
+        }
+        applySourceMode();
+        onSelectionChanged();
+    }
+
+    function applyPreferences(payload) {
+        dailyCheckbox.checked = Boolean(payload.daily_enabled);
+        weeklyCheckbox.checked = Boolean(payload.weekly_enabled);
+
+        const selected = payload.selected_source_ids;
+        const isAll = selected === null || selected === undefined;
+        modeAllRadio.checked = isAll;
+        modeCustomRadio.checked = !isAll;
+
+        renderSources(state.categories, isAll ? null : selected);
+        applySourceMode();
+        state.loaded = true;
+        captureBaseline();
+        updateSummary();
+        updateActionBar();
     }
 
     async function requestJson(url, options) {
@@ -337,10 +547,8 @@
             updateTopActions();
             updateFlowBanner();
 
-            dailyCheckbox.checked = Boolean(payload.daily_enabled);
-            weeklyCheckbox.checked = Boolean(payload.weekly_enabled);
             legacyNote.classList.toggle("is-hidden", state.dbPreferencesEnabled);
-            renderSources(state.categories, payload.selected_source_ids);
+            applyPreferences(payload);
 
             setStatus(state.dbPreferencesEnabled
                 ? curT("Your current DB-managed settings are loaded.")
@@ -433,7 +641,7 @@
             updateTopActions();
             updateFlowBanner();
             updateUrlStatus("resubscribed");
-            setStatus(curT("You have been resubscribed successfully."));
+            setStatus(curT("You have been resubscribed successfully."), "success");
         } catch (_error) {
             setStatus(curT("Could not resubscribe right now. Please try again later or contact us at info@curiosa.news."), "warm");
         } finally {
@@ -467,12 +675,37 @@
             state.subscriptionStatus = payload.status || state.subscriptionStatus;
             legacyNote.classList.add("is-hidden");
             updateTopActions();
-            setStatus(curT("Your subscription settings have been saved."));
+            captureBaseline();
+            updateActionBar();
+            setStatus(curT("Your subscription settings have been saved."), "success");
         } catch (_error) {
             setStatus(curT("Could not save your changes. Please try again later or contact us at info@curiosa.news."), "warm");
         } finally {
             setBusy(false);
         }
+    }
+
+    /* Reset writes defaults to the server on the spot, so it asks twice: the
+       first click only arms the button, and it disarms itself if ignored. */
+    function armReset() {
+        if (state.resetArmed) {
+            window.clearTimeout(state.resetTimer);
+            disarmReset();
+            resetPreferences();
+            return;
+        }
+        state.resetArmed = true;
+        resetButton.textContent = curT("Confirm reset");
+        resetButton.classList.remove("button-secondary");
+        resetButton.classList.add("button-danger");
+        state.resetTimer = window.setTimeout(disarmReset, 5000);
+    }
+
+    function disarmReset() {
+        state.resetArmed = false;
+        resetButton.textContent = curT("Reset settings");
+        resetButton.classList.remove("button-danger");
+        resetButton.classList.add("button-secondary");
     }
 
     async function resetPreferences() {
@@ -488,14 +721,12 @@
                 },
             );
 
-            dailyCheckbox.checked = Boolean(payload.daily_enabled);
-            weeklyCheckbox.checked = Boolean(payload.weekly_enabled);
             state.dbPreferencesEnabled = Boolean(payload.db_preferences_enabled);
             state.subscriptionStatus = payload.status || state.subscriptionStatus;
             legacyNote.classList.add("is-hidden");
             updateTopActions();
-            renderSources(state.categories, payload.selected_source_ids);
-            setStatus(curT("Your subscription settings have been reset."));
+            applyPreferences(payload);
+            setStatus(curT("Your subscription settings have been reset."), "success");
         } catch (_error) {
             setStatus(curT("Could not reset your settings. Please try again later or contact us at info@curiosa.news."), "warm");
         } finally {
@@ -503,11 +734,43 @@
         }
     }
 
+    function discardChanges() {
+        if (!state.baseline) {
+            return;
+        }
+        const baseline = JSON.parse(state.baseline);
+        dailyCheckbox.checked = baseline.daily;
+        weeklyCheckbox.checked = baseline.weekly;
+        modeAllRadio.checked = baseline.mode === "all";
+        modeCustomRadio.checked = baseline.mode === "custom";
+        renderSources(state.categories, baseline.sources);
+        applySourceMode();
+        onSelectionChanged();
+        setStatus(curT("Your unsaved changes were discarded."));
+    }
+
+    /* Nothing is written to the server without Save, so a page leave with a
+       dirty form is the one place a warning is worth it. */
+    window.addEventListener("beforeunload", (event) => {
+        if (!isDirty()) {
+            return;
+        }
+        event.preventDefault();
+        event.returnValue = "";
+    });
+
+    dailyCheckbox.addEventListener("change", onSelectionChanged);
+    weeklyCheckbox.addEventListener("change", onSelectionChanged);
+    modeAllRadio.addEventListener("change", onModeChanged);
+    modeCustomRadio.addEventListener("change", onModeChanged);
+    sourceFilter.addEventListener("input", applyFilter);
     unsubscribeButton.addEventListener("click", unsubscribe);
     saveButton.addEventListener("click", savePreferences);
-    resetButton.addEventListener("click", resetPreferences);
+    resetButton.addEventListener("click", armReset);
+    discardButton.addEventListener("click", discardChanges);
     resubscribeButton.addEventListener("click", resubscribe);
     updateTopActions();
     updateFlowBanner();
+    updateActionBar();
     loadPreferences();
 })();

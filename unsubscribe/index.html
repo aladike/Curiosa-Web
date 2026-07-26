@@ -14,109 +14,6 @@
     <link rel="stylesheet" href="../site.css">
     <script defer src="../site-i18n.js"></script>
     <link rel="stylesheet" href="../styles.css">
-    <style>
-        .unsubscribe-shell {
-            width: min(600px, calc(100% - 32px));
-            margin: 44px auto 52px;
-        }
-
-        .unsubscribe-card {
-            padding: 24px;
-        }
-
-        .unsubscribe-status-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin: 18px 0 0;
-            padding: 12px 14px;
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            background: var(--panel-2);
-        }
-
-        .unsubscribe-status-label {
-            margin: 0;
-            color: var(--muted);
-            font-size: 13.5px;
-            font-weight: 700;
-        }
-
-        .unsubscribe-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 20px 0 0;
-        }
-
-        .unsubscribe-actions .button-danger:not(:disabled) {
-            color: #ffffff;
-            background: #B3261E;
-            border-color: #B3261E;
-            box-shadow: 0 6px 16px rgba(179, 38, 30, 0.22);
-        }
-
-        .unsubscribe-actions .button-danger:not(:disabled):hover {
-            background: #C22F26;
-            border-color: #C22F26;
-        }
-
-        .unsubscribe-actions .button-secondary:disabled {
-            cursor: default;
-        }
-
-        .unsubscribe-links {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 18px 0 0;
-            padding-top: 16px;
-            border-top: 1px solid var(--line);
-        }
-
-        .unsubscribe-link {
-            color: var(--blue);
-            font-size: 13.5px;
-            font-weight: 700;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
-
-        .unsubscribe-link:hover {
-            color: var(--blue-solid);
-        }
-
-        .unsubscribe-note {
-            margin-top: 16px;
-            color: var(--muted);
-            font-size: 13.5px;
-            line-height: 1.55;
-        }
-
-        .status-pill-neutral {
-            color: #4A5872;
-            background: #EEF1F7;
-            border-color: var(--line-strong);
-        }
-
-        @media (max-width: 640px) {
-            .unsubscribe-shell {
-                width: min(100% - 20px, 600px);
-                margin: 22px auto 32px;
-            }
-
-            .unsubscribe-card {
-                padding: 20px 16px;
-            }
-
-            .unsubscribe-status-row,
-            .unsubscribe-actions {
-                align-items: stretch;
-                flex-direction: column;
-            }
-        }
-    </style>
 </head>
 <body>
     <script>
@@ -130,7 +27,7 @@
             <a class="site-logo" href="/" aria-label="Curiosa">Curio<span>sa</span></a>
             <nav class="site-nav" aria-label="Subscription controls">
                 <a class="site-nav__link" data-i18n href="../subscription-configuration/">Preferences</a>
-                <a class="site-nav__link" data-i18n href="../unsubscribe/">Unsubscribe</a>
+                <a class="site-nav__link is-current" aria-current="page" data-i18n href="../unsubscribe/">Unsubscribe</a>
             </nav>
         </div>
     </header>
@@ -148,15 +45,26 @@
                 <span id="status-badge" class="status-pill status-pill-neutral" data-i18n>Loading</span>
             </div>
 
+            <ul id="consequences" class="consequence-list">
+                <li data-i18n>Daily briefings and the weekly digest stop immediately.</li>
+                <li data-i18n>Your source and delivery preferences are kept, not deleted.</li>
+                <li data-i18n>You can re-subscribe from this page at any time.</li>
+            </ul>
+
             <p id="status-message" class="note" role="status" aria-live="polite" data-i18n>Loading your subscription status...</p>
 
             <div id="action-buttons" class="unsubscribe-actions">
-                <button id="unsubscribe-button" class="button button-danger" type="button" data-i18n>Unsubscribe</button>
-                <button id="resubscribe-button" class="button button-secondary" type="button" data-i18n>Re-subscribe</button>
+                <a id="manage-button" class="button button-primary" href="../subscription-configuration/" data-i18n>Adjust preferences instead</a>
+                <button id="unsubscribe-button" class="button button-danger-outline" type="button" data-i18n>Unsubscribe</button>
+                <button id="resubscribe-button" class="button button-success is-hidden" type="button" data-i18n>Re-subscribe</button>
             </div>
 
-            <div class="unsubscribe-links">
-                <a id="manage-link" class="unsubscribe-link" href="../subscription-configuration/" data-i18n>Manage Subscription</a>
+            <div id="confirm-box" class="confirm-box is-hidden">
+                <p data-i18n>Unsubscribe from all Curiosa emails? This takes effect right away.</p>
+                <div class="confirm-actions">
+                    <button id="confirm-unsubscribe" class="button button-danger" type="button" data-i18n>Yes, unsubscribe</button>
+                    <button id="cancel-unsubscribe" class="button button-secondary" type="button" data-i18n>Keep my subscription</button>
+                </div>
             </div>
         </section>
     </main>
@@ -208,28 +116,40 @@
             const statusRow = document.getElementById("status-row");
             const statusBadge = document.getElementById("status-badge");
             const statusMessage = document.getElementById("status-message");
+            const consequences = document.getElementById("consequences");
             const actionButtons = document.getElementById("action-buttons");
+            const manageButton = document.getElementById("manage-button");
             const unsubscribeButton = document.getElementById("unsubscribe-button");
             const resubscribeButton = document.getElementById("resubscribe-button");
-            const manageLink = document.getElementById("manage-link");
+            const confirmBox = document.getElementById("confirm-box");
+            const confirmButton = document.getElementById("confirm-unsubscribe");
+            const cancelButton = document.getElementById("cancel-unsubscribe");
 
             function setMessage(message, tone) {
                 statusMessage.textContent = message || "";
                 statusMessage.classList.toggle("is-hidden", !message);
                 statusMessage.classList.toggle("note-warm", tone === "warm");
+                statusMessage.classList.toggle("note-success", tone === "success");
             }
 
             function setBusy(isBusy) {
                 state.busy = isBusy;
                 unsubscribeButton.disabled = isBusy;
                 resubscribeButton.disabled = isBusy;
+                confirmButton.disabled = isBusy;
+                cancelButton.disabled = isBusy;
             }
 
             function showFatal(message) {
                 statusRow.classList.add("is-hidden");
                 actionButtons.classList.add("is-hidden");
-                manageLink.classList.add("is-hidden");
+                consequences.classList.add("is-hidden");
+                confirmBox.classList.add("is-hidden");
                 setMessage(message, "warm");
+            }
+
+            function closeConfirm() {
+                confirmBox.classList.add("is-hidden");
             }
 
             function buildManageUrl() {
@@ -255,23 +175,28 @@
                 statusRow.classList.toggle("is-hidden", !(isActive || isUnsubscribed));
                 statusBadge.className = "status-pill";
 
+                /* Only the state you are actually in offers an action: an active
+                   subscriber sees leaving, an unsubscribed one sees coming back. */
                 if (isActive) {
                     statusBadge.textContent = curT("Active");
                     statusBadge.classList.add("status-pill-active");
+                    consequences.classList.remove("is-hidden");
+                    manageButton.classList.remove("is-hidden");
                     unsubscribeButton.disabled = state.busy;
                     unsubscribeButton.classList.remove("is-hidden");
-                    resubscribeButton.disabled = true;
-                    resubscribeButton.classList.remove("is-hidden");
+                    resubscribeButton.classList.add("is-hidden");
                     return;
                 }
 
                 if (isUnsubscribed) {
                     statusBadge.textContent = curT("Unsubscribed");
                     statusBadge.classList.add("status-pill-inactive");
-                    unsubscribeButton.disabled = true;
+                    consequences.classList.add("is-hidden");
+                    manageButton.classList.add("is-hidden");
                     unsubscribeButton.classList.add("is-hidden");
                     resubscribeButton.disabled = state.busy;
                     resubscribeButton.classList.remove("is-hidden");
+                    closeConfirm();
                     return;
                 }
 
@@ -298,7 +223,7 @@
                 return payload;
             }
 
-            async function loadStatus(successMessage) {
+            async function loadStatus(successMessage, tone) {
                 setBusy(true);
                 try {
                     const payload = await requestJson(
@@ -307,7 +232,7 @@
                     );
                     state.status = payload.status || "";
                     renderStatus();
-                    setMessage(successMessage || curT("Your current subscription status is loaded."));
+                    setMessage(successMessage || curT("Your current subscription status is loaded."), tone);
                 } catch (error) {
                     const code = error instanceof Error ? error.message : "request_failed";
                     if (code === "invalid_token") {
@@ -328,6 +253,7 @@
 
             async function changeSubscription(action) {
                 setBusy(true);
+                closeConfirm();
                 setMessage(action === "resubscribe" ? curT("Re-subscribing...") : curT("Unsubscribing..."));
 
                 try {
@@ -340,7 +266,7 @@
                     }
                     await loadStatus(action === "resubscribe"
                         ? curT("You have been re-subscribed successfully.")
-                        : curT("You have been unsubscribed successfully."));
+                        : curT("You have been unsubscribed successfully."), "success");
                 } catch (_error) {
                     setMessage(curT("Could not update your subscription right now. Please try again later or contact us at info@curiosa.news."), "warm");
                 } finally {
@@ -349,7 +275,12 @@
                 }
             }
 
-            unsubscribeButton.addEventListener("click", () => changeSubscription(""));
+            unsubscribeButton.addEventListener("click", () => {
+                confirmBox.classList.remove("is-hidden");
+                confirmButton.focus();
+            });
+            cancelButton.addEventListener("click", closeConfirm);
+            confirmButton.addEventListener("click", () => changeSubscription(""));
             resubscribeButton.addEventListener("click", () => changeSubscription("resubscribe"));
 
             if (!token) {
@@ -362,7 +293,7 @@
                 return;
             }
 
-            manageLink.href = buildManageUrl();
+            manageButton.href = buildManageUrl();
             renderStatus();
             loadStatus();
         })();

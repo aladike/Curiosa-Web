@@ -34,6 +34,25 @@
             "Diese Quellenauswahl betrifft nur das tägliche Briefing.",
         "Save changes": "Änderungen speichern",
         "Reset settings": "Einstellungen zurücksetzen",
+        "Confirm reset": "Zurücksetzen bestätigen",
+        "Discard changes": "Änderungen verwerfen",
+
+        // Summary rail and source mode
+        "Your subscription": "Ihr Abonnement",
+        "Sources": "Quellen",
+        "Changes take effect with the next briefing. Nothing is saved until you use Save changes.":
+            "Änderungen gelten ab dem nächsten Briefing. Gespeichert wird erst über „Änderungen speichern“.",
+        "All sources": "Alle Quellen",
+        "Everything Curiosa tracks, including sources added later.":
+            "Alles, was Curiosa verfolgt — auch später ergänzte Quellen.",
+        "Choose sources": "Quellen auswählen",
+        "Only the sources you tick below.": "Nur die unten angehakten Quellen.",
+        "Filter sources by name": "Quellen nach Namen filtern",
+        "On": "Ein",
+        "Off": "Aus",
+        "You have unsaved changes.": "Sie haben ungespeicherte Änderungen.",
+        "All changes saved.": "Alle Änderungen gespeichert.",
+        "Your unsaved changes were discarded.": "Ihre ungespeicherten Änderungen wurden verworfen.",
 
         // Manage-subscription runtime messages
         "This manage-subscription link is incomplete. Your personal access token is part of the manage-subscription link in your Curiosa email — please open this page by clicking that link.":
@@ -70,6 +89,7 @@
         "Select all": "Alle auswählen",
         "Clear all": "Alle abwählen",
         "Authorities": "Behörden",
+        "Media & Blogs": "Medien & Blogs",
 
         // Unsubscribe page and runtime messages
         "Curiosa Email": "Curiosa-E-Mail",
@@ -77,6 +97,17 @@
         "You can unsubscribe from Curiosa emails here. If you change your mind, you can re-subscribe using this same link.":
             "Hier können Sie sich von Curiosa-E-Mails abmelden. Wenn Sie es sich anders überlegen, können Sie sich über denselben Link wieder anmelden.",
         "Current subscription status": "Aktueller Abo-Status",
+        "Daily briefings and the weekly digest stop immediately.":
+            "Tägliche Briefings und der wöchentliche Digest enden sofort.",
+        "Your source and delivery preferences are kept, not deleted.":
+            "Ihre Quellen- und Zustelleinstellungen bleiben erhalten und werden nicht gelöscht.",
+        "You can re-subscribe from this page at any time.":
+            "Sie können sich jederzeit über diese Seite wieder anmelden.",
+        "Adjust preferences instead": "Stattdessen Einstellungen anpassen",
+        "Unsubscribe from all Curiosa emails? This takes effect right away.":
+            "Von allen Curiosa-E-Mails abmelden? Das wird sofort wirksam.",
+        "Yes, unsubscribe": "Ja, abmelden",
+        "Keep my subscription": "Abo behalten",
         "Loading": "Lädt",
         "Loading your subscription status...": "Ihr Abo-Status wird geladen …",
         "Re-subscribe": "Wieder anmelden",
@@ -135,6 +166,15 @@
             var translated = DE[normalize(el.textContent)];
             if (translated) {
                 el.textContent = translated;
+            }
+        });
+
+        /* Placeholders are attribute text, so they need their own pass; the
+           English placeholder doubles as the dictionary key, as elsewhere. */
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+            var translated = DE[normalize(el.getAttribute("placeholder") || "")];
+            if (translated) {
+                el.setAttribute("placeholder", translated);
             }
         });
     }
