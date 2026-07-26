@@ -608,12 +608,14 @@ body.home-page::before {
     display: block;
     font-size: var(--label);
     font-weight: 700;
-    line-height: 1.25;
+    line-height: 1.3;
     letter-spacing: 0.005em;
-    color: #e2ecff;
+    color: #9db0cc;
     hyphens: auto;
     overflow-wrap: break-word;
-    transition: font-size 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition:
+        font-size 0.22s cubic-bezier(0.2, 0.7, 0.2, 1),
+        color 0.22s ease;
 }
 
 .orbit__text {
@@ -640,6 +642,11 @@ body.home-page::before {
     border-color: rgba(158, 196, 255, 0.6);
     background: rgba(16, 36, 68, 0.94);
     box-shadow: 0 0 40px -6px rgba(110, 155, 245, 0.4);
+}
+
+.orbit__bubble:hover .orbit__label,
+.orbit__bubble:focus-visible .orbit__label {
+    color: #e2ecff;
 }
 
 .orbit__bubble:hover .orbit__text,
@@ -700,7 +707,7 @@ body.home-page::before {
     --dir-rev: reverse;
     --size: 92px;
     --size-open: 214px;
-    --label: 11.5px;
+    --label: 10px;
 }
 
 .orbit__ring--2 {
@@ -713,7 +720,7 @@ body.home-page::before {
     --dir-rev: normal;
     --size: 88px;
     --size-open: 220px;
-    --label: 11px;
+    --label: 9.5px;
 }
 
 .orbit__ring--3 {
@@ -726,14 +733,14 @@ body.home-page::before {
     --dir-rev: reverse;
     --size: 84px;
     --size-open: 214px;
-    --label: 10.5px;
+    --label: 9.5px;
 }
 
 /* ---- Seats ------------------------------------------------------------ */
 /* Angles are spread unevenly and the radii carry a few percent of jitter, so
    no ring ever looks like a dial. */
 .orbit__ring--1 .orbit__arm:nth-child(1) { --a: 22deg;  --r: calc(var(--rr) * 1.00); --drift: 15s; }
-.orbit__ring--1 .orbit__arm:nth-child(2) { --a: 152deg; --r: calc(var(--rr) * 0.94); --drift: 19s; }
+.orbit__ring--1 .orbit__arm:nth-child(2) { --a: 172deg; --r: calc(var(--rr) * 0.94); --drift: 19s; }
 .orbit__ring--1 .orbit__arm:nth-child(3) { --a: 268deg; --r: calc(var(--rr) * 1.05); --drift: 23s; }
 
 .orbit__ring--2 .orbit__arm:nth-child(1) { --a: 52deg;  --r: calc(var(--rr) * 1.02); --drift: 17s; }
@@ -741,12 +748,10 @@ body.home-page::before {
 .orbit__ring--2 .orbit__arm:nth-child(3) { --a: 213deg; --r: calc(var(--rr) * 1.05); --drift: 14s; }
 .orbit__ring--2 .orbit__arm:nth-child(4) { --a: 318deg; --r: calc(var(--rr) * 0.97); --drift: 25s; }
 
-.orbit__ring--3 .orbit__arm:nth-child(1) { --a: 8deg;   --r: calc(var(--rr) * 1.00); --drift: 22s; }
-.orbit__ring--3 .orbit__arm:nth-child(2) { --a: 74deg;  --r: calc(var(--rr) * 0.95); --drift: 16s; }
-.orbit__ring--3 .orbit__arm:nth-child(3) { --a: 133deg; --r: calc(var(--rr) * 1.04); --drift: 26s; }
-.orbit__ring--3 .orbit__arm:nth-child(4) { --a: 189deg; --r: calc(var(--rr) * 0.98); --drift: 18s; }
-.orbit__ring--3 .orbit__arm:nth-child(5) { --a: 247deg; --r: calc(var(--rr) * 1.06); --drift: 24s; }
-.orbit__ring--3 .orbit__arm:nth-child(6) { --a: 302deg; --r: calc(var(--rr) * 0.93); --drift: 20s; }
+.orbit__ring--3 .orbit__arm:nth-child(1) { --a: 18deg;  --r: calc(var(--rr) * 1.00); --drift: 22s; }
+.orbit__ring--3 .orbit__arm:nth-child(2) { --a: 104deg; --r: calc(var(--rr) * 0.95); --drift: 16s; }
+.orbit__ring--3 .orbit__arm:nth-child(3) { --a: 192deg; --r: calc(var(--rr) * 1.05); --drift: 26s; }
+.orbit__ring--3 .orbit__arm:nth-child(4) { --a: 281deg; --r: calc(var(--rr) * 0.97); --drift: 19s; }
 
 /* ---- Static fallback -------------------------------------------------- */
 /* Narrow viewports have no hover, and the root page cannot ship a tap handler
