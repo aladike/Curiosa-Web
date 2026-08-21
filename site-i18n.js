@@ -90,6 +90,7 @@
         "Clear all": "Alle abwählen",
         "Authorities": "Behörden",
         "Media & Blogs": "Medien & Blogs",
+        "New": "Neu",
 
         // Unsubscribe page and runtime messages
         "Curiosa Email": "Curiosa-E-Mail",
