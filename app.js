@@ -33,6 +33,11 @@
     const IAPP_SOURCE_IDS = new Set(IAPP_EMAIL_SOURCES.map((source) => source.id));
     const IAPP_SOURCE_LABELS = new Set(IAPP_EMAIL_SOURCES.map((source) => source.label));
 
+    /* Recently added sources, flagged so subscribers with a hand-picked selection can
+       spot them — they are not selected for those subscribers until they tick the box.
+       Added 21.08.2026; clear the set once the badge has served its purpose. */
+    const NEW_SOURCE_IDS = new Set([58, 59, 60, 61, 62, 63]);
+
     const topActions = document.getElementById("top-actions");
     const subscriptionStatusPill = document.getElementById("subscription-status-pill");
     const flowBanner = document.getElementById("flow-banner");
@@ -280,6 +285,13 @@
 
                 const badges = document.createElement("span");
                 badges.className = "source-badges";
+
+                if (NEW_SOURCE_IDS.has(source.id)) {
+                    const newBadge = document.createElement("span");
+                    newBadge.className = "pill pill-new";
+                    newBadge.textContent = curT("New");
+                    badges.appendChild(newBadge);
+                }
 
                 if (category.id === "authorities") {
                     const authorityBadge = document.createElement("span");
