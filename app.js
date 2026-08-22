@@ -35,8 +35,8 @@
 
     /* Recently added sources, flagged so subscribers with a hand-picked selection can
        spot them — they are not selected for those subscribers until they tick the box.
-       Added 21.08.2026; clear the set once the badge has served its purpose. */
-    const NEW_SOURCE_IDS = new Set([58, 59, 60, 61, 62, 63]);
+       Added 21.-22.08.2026; clear the set once the badge has served its purpose. */
+    const NEW_SOURCE_IDS = new Set([58, 59, 60, 61, 62, 63, 64, 65, 124]);
 
     const topActions = document.getElementById("top-actions");
     const subscriptionStatusPill = document.getElementById("subscription-status-pill");
