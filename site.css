@@ -334,7 +334,6 @@ a.site-logo:focus-visible {
         box-shadow: inset 0 0 0 1px #354361;
     }
 }
-
 /* ---- Root page ------------------------------------------------------- */
 /* Standalone dark-navy landing. Committed to a single dark look (not
    theme-reactive) as a deliberate hero. Pure CSS — no scripts, no external
@@ -344,15 +343,16 @@ body.home-page {
     margin: 0;
     min-height: 100vh;
     overflow-x: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #e6edf7;
     background:
         radial-gradient(1100px 720px at 80% -12%, rgba(56, 110, 230, 0.30), transparent 60%),
         radial-gradient(920px 620px at 8% 112%, rgba(46, 74, 143, 0.34), transparent 56%),
         linear-gradient(180deg, #0a1526 0%, #0b1a32 46%, #091120 100%);
+    /* The page scrolls now. Pinning the gradients to the viewport keeps the
+       lighting the hero was drawn for instead of stretching it over a
+       document several screens tall. */
+    background-attachment: fixed;
 }
 
 /* Theme-independent brand grid — overrides the shared body::before so the
@@ -372,18 +372,28 @@ body.home-page::before {
     box-sizing: border-box;
     width: 100%;
     margin: 0 auto;
-    padding: 40px 0;
+}
+
+
+/* ---- Hero ------------------------------------------------------------- */
+/* Deliberately short of a full viewport: the gallery below has to show its
+   first line, or the page reads as if it ended at the wordmark. */
+.hero {
+    position: relative;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 86vh;
+    padding: 64px 24px clamp(56px, 9vh, 96px);
     text-align: center;
 }
 
 /* Soft blue spotlight behind the wordmark for depth. */
-.home::before {
+.hero::before {
     content: "";
     position: absolute;
-    z-index: -1;
+    z-index: 0;
     top: 50%;
     left: 50%;
     width: min(760px, 96vw);
@@ -392,6 +402,12 @@ body.home-page::before {
     background: radial-gradient(closest-side, rgba(64, 120, 240, 0.30), transparent 72%);
     filter: blur(22px);
     pointer-events: none;
+}
+
+.hero__core {
+    position: relative;
+    z-index: 1;
+    width: min(360px, 100%);
 }
 
 /* The Curiosa arc mark as a glowing lockup above the wordmark. */
@@ -451,367 +467,165 @@ body.home-page::before {
 }
 
 
-/* ---- Orbit field ------------------------------------------------------ */
-/* Capability bubbles drift around the wordmark on three tilted rings. Pure
-   CSS: the root page CSP allows no scripts, so every orbit parameter lives
-   here and is selected per ring / per arm.
+/* ---- Email samples ----------------------------------------------------- */
+/* Two issues straight out of the production renderer, rasterised. Images
+   rather than markup on purpose: the source list is not public, and a blurred
+   <span> is still plain text in the page source, while a blurred pixel is not.
 
-   Transform chain per bubble (outermost first):
-       .orbit__ring   rotate(tilt) scaleY(k)        the orbital plane
-       .orbit__spin   rotate(t)                     the animation
-       .orbit__arm    rotate(a) translateX(r)       the seat on the ring
-       .orbit__node   rotate(-t)                    cancels the spin
-       .orbit__bubble rotate(-a) scaleY(1/k) rotate(-tilt) translate(-50%,-50%)
+   Each sheet stacks two copies of the same file, so the browser fetches it
+   once. The lower copy is sharp; the upper one is blurred and masked to exist
+   only over the last stretch, and the sheet itself is masked to transparent at
+   its bottom edge. Together they read as an issue dissolving mid-page rather
+   than as a very short email. Both masks are expressed in percent, so the
+   fade keeps its proportion when the sheet scales down on a narrow screen —
+   and the two sheets carry their own values, because they are not the same
+   height. */
+.samples {
+    box-sizing: border-box;
+    width: min(1360px, 92vw);
+    margin: 0 auto;
+    padding-bottom: clamp(64px, 12vh, 140px);
+}
 
-   2-D rotations commute, so every rotation between scaleY(k) and scaleY(1/k)
-   cancels out and the bubble renders as an undistorted, upright circle while
-   its position still traces the tilted ellipse. The un-squash has to be the
-   innermost scale, and the centering translate has to sit after it — that is
-   why the order above cannot be shuffled.
+.samples__head {
+    max-width: 640px;
+    margin: 0 auto clamp(30px, 4vw, 46px);
+    text-align: center;
+}
 
-   k stays close to 1 (0.72–0.78). A flatter plane fits more rings into the
-   viewport, but it also distorts the trails, which live in the same plane:
-   at k = 0.4 a tangential streak lands visibly away from its bubble.
+.samples__eyebrow {
+    margin: 0 0 10px;
+    color: #7f9ad0;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
 
-   Nothing here paints a filter or a large shadow while it moves — those are
-   what made the field stutter. Motion is transform-only, on three promoted
-   layers. */
-.orbit {
-    --field: min(1060px, 92vw, 112vh);
+.samples__title {
+    margin: 0 0 12px;
+    color: #e8effb;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.samples__note {
+    margin: 0;
+    color: #9db0cc;
+    font-size: clamp(13px, 1.4vw, 14.5px);
+    line-height: 1.62;
+}
+
+.samples__grid {
+    display: grid;
+    /* Explicit, and minmax(0, …): an auto column takes its width from the
+       item's max-content, and the item's max-content is the capture's
+       intrinsic 1360 px capped at max-width — which blows the column out to
+       680 px on a phone and pushes the whole section past the viewport. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(40px, 6vw, 56px);
+    justify-items: center;
+}
+
+.sample {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    /* The capture is 680 CSS px wide at 2×; past that it would upscale. */
+    max-width: 680px;
+    margin: 0;
+}
+
+/* Both sheets fade over roughly the same 150 px of their own capture, with
+   the haze starting ~210 px up — the percentages differ only because the two
+   captures are not the same height (daily 2194, weekly 1274 CSS px). The
+   daily numbers are also what keeps the Radar section on the readable side of
+   the fade, so re-check them if the sample images are regenerated at a
+   different length. */
+.sample--daily {
+    --sheet-fade: 93%;
+    --haze-in: 90%;
+    --haze-full: 99%;
+}
+
+.sample--weekly {
+    --sheet-fade: 88%;
+    --haze-in: 83%;
+    --haze-full: 98%;
+}
+
+.sample__cap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin: 0 2px 13px;
+}
+
+.sample__kind {
+    color: #dce7fb;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.sample__when {
+    color: #7f9ad0;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+}
+
+.sample__sheet {
     position: relative;
-    width: var(--field);
-    height: calc(var(--field) * 0.72 + 88px);
+    overflow: hidden;
+    /* Only the top corners are ever drawn — the bottom two are inside the
+       fade, and so is the hairline that would otherwise close the box. */
+    border-radius: 14px 14px 0 0;
+    box-shadow:
+        inset 0 0 0 1px rgba(150, 186, 255, 0.18),
+        0 26px 64px -30px rgba(3, 8, 18, 0.95);
+    -webkit-mask-image: linear-gradient(180deg, #000 var(--sheet-fade), transparent 100%);
+    mask-image: linear-gradient(180deg, #000 var(--sheet-fade), transparent 100%);
 }
 
-.orbit__core {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: 2;
-    width: min(360px, 74%);
-    transform: translate(-50%, -50%);
+.sample__page {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
-.orbit__ring {
+.sample__page--haze {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 0;
-    height: 0;
-    z-index: 1;
-    transform: rotate(var(--tilt)) scaleY(var(--k));
-}
-
-.orbit__spin,
-.orbit__arm,
-.orbit__node {
-    position: absolute;
-    left: 0;
     top: 0;
-    width: 0;
-    height: 0;
-    transform-origin: 0 0;
-}
-
-.orbit__spin {
-    animation: orbit-spin var(--dur) linear infinite;
-    animation-direction: var(--dir);
-    will-change: transform;
-}
-
-/* The seat: angle around the ring, then out to the radius. */
-.orbit__arm {
-    transform: rotate(var(--a)) translateX(var(--r));
-}
-
-/* The counter-spin runs at the ring's duration in the opposite direction, so
-   the bubble stays upright; the drift rides on the separate translate
-   property and therefore does not fight the transform animation. */
-.orbit__node {
-    animation-name: orbit-spin, orbit-drift;
-    animation-duration: var(--dur), var(--drift);
-    animation-timing-function: linear, ease-in-out;
-    animation-iteration-count: infinite, infinite;
-    animation-direction: var(--dir-rev), alternate;
-}
-
-/* Comet trail: it lives on the arm, which is not counter-rotated, so it stays
-   tangential and always points back along the direction of travel. The box
-   spans exactly from the bubble centre backwards, and the softness comes from
-   a radial gradient rather than a blur filter. */
-.orbit__arm::after {
-    content: "";
-    position: absolute;
     left: 0;
-    top: 0;
-    z-index: -1;
-    width: calc(var(--size) * 0.46);
-    height: calc(var(--size) * 1.45);
-    background: radial-gradient(farthest-side at 50% 100%,
-        rgba(186, 216, 255, 0.55) 0%,
-        rgba(150, 190, 255, 0.20) 34%,
-        rgba(138, 180, 255, 0.06) 62%,
-        transparent 100%);
-    transform: translate(-50%, -100%);
-    transform-origin: 0 0;
+    filter: blur(7px);
+    -webkit-mask-image: linear-gradient(180deg, transparent var(--haze-in), #000 var(--haze-full));
+    mask-image: linear-gradient(180deg, transparent var(--haze-in), #000 var(--haze-full));
     pointer-events: none;
 }
 
-/* Rings that spin backwards trail from the other side. */
-.orbit__ring--2 .orbit__arm::after {
-    background: radial-gradient(farthest-side at 50% 0%,
-        rgba(186, 216, 255, 0.55) 0%,
-        rgba(150, 190, 255, 0.20) 34%,
-        rgba(138, 180, 255, 0.06) 62%,
-        transparent 100%);
-    transform: translate(-50%, 0);
-    transform-origin: 0 0;
-}
-
-.orbit__bubble {
-    position: absolute;
-    left: 0;
-    top: 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: var(--size);
-    height: var(--size);
-    padding: 8% 10%;
-    border: 1px solid rgba(146, 186, 255, 0.30);
-    border-radius: 50%;
-    background: rgba(14, 32, 60, 0.72);
-    color: #cfdcf5;
-    text-align: center;
-    transform: rotate(calc(-1 * var(--a))) scaleY(var(--ik)) rotate(calc(-1 * var(--tilt))) translate(-50%, -50%);
-    /* The chain above is written as if transforms applied about the top-left
-       corner. With the default centre origin the browser wraps it in
-       translate(±half the box), which pushes every bubble off its seat by up
-       to its own diameter — and leaves its trail behind at the seat. */
-    transform-origin: 0 0;
-    transition:
-        width 0.22s cubic-bezier(0.2, 0.7, 0.2, 1),
-        height 0.22s cubic-bezier(0.2, 0.7, 0.2, 1),
-        border-color 0.22s ease,
-        background-color 0.22s ease,
-        box-shadow 0.22s ease;
-    cursor: default;
-}
-
-.orbit__bubble:focus-visible {
-    outline: none;
-}
-
-.orbit__label {
-    display: block;
-    font-size: var(--label);
-    font-weight: 700;
-    line-height: 1.3;
-    letter-spacing: 0.005em;
+.sample__legend {
+    margin: 20px 2px 0;
     color: #9db0cc;
-    hyphens: auto;
-    overflow-wrap: break-word;
-    transition:
-        font-size 0.22s cubic-bezier(0.2, 0.7, 0.2, 1),
-        color 0.22s ease;
+    font-size: 13.5px;
+    line-height: 1.62;
 }
 
-.orbit__text {
-    display: block;
-    overflow: hidden;
-    max-height: 0;
-    margin-top: 0;
-    opacity: 0;
-    font-size: 12.5px;
-    line-height: 1.45;
-    color: #aec1e2;
-    transition:
-        max-height 0.22s cubic-bezier(0.2, 0.7, 0.2, 1),
-        margin-top 0.22s cubic-bezier(0.2, 0.7, 0.2, 1),
-        opacity 0.16s ease;
-}
-
-/* Expand on hover or keyboard focus. The glow is applied only here, so no
-   shadow is ever repainted while a bubble is in motion. */
-.orbit__bubble:hover,
-.orbit__bubble:focus-visible {
-    --size: var(--size-open);
-    --label: 15px;
-    border-color: rgba(158, 196, 255, 0.6);
-    background: rgba(16, 36, 68, 0.94);
-    box-shadow: 0 0 40px -6px rgba(110, 155, 245, 0.4);
-}
-
-.orbit__bubble:hover .orbit__label,
-.orbit__bubble:focus-visible .orbit__label {
-    color: #e2ecff;
-}
-
-.orbit__bubble:hover .orbit__text,
-.orbit__bubble:focus-visible .orbit__text {
-    max-height: 11em;
-    margin-top: 7px;
-    opacity: 1;
-}
-
-/* Only the ring you are actually reading holds still. Pausing the whole field
-   on .orbit:hover meant the cursor merely being in the window froze
-   everything, which is not what a hover is for. */
-.orbit__ring:has(.orbit__bubble:hover),
-.orbit__ring:has(.orbit__bubble:focus-visible) {
-    z-index: 3;
-}
-
-.orbit__ring:has(.orbit__bubble:hover) .orbit__spin,
-.orbit__ring:has(.orbit__bubble:hover) .orbit__node,
-.orbit__ring:has(.orbit__bubble:focus-visible) .orbit__spin,
-.orbit__ring:has(.orbit__bubble:focus-visible) .orbit__node {
-    animation-play-state: paused;
-}
-
-@keyframes orbit-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
+/* Two sheets fit side by side only once each column can still carry the
+   capture at a readable scale. Below that they stack at full width. */
+@media (min-width: 1280px) {
+    .samples__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
     }
 }
 
-@keyframes orbit-drift {
-    from {
-        translate: 0 0;
-    }
-    to {
-        translate: 7px -9px;
-    }
-}
-
-/* ---- Ring parameters -------------------------------------------------- */
-/* --ik is 1 / --k; the two are kept as an explicit pair so the un-squash is
-   readable next to the squash it undoes. Radii are derived from the field
-   minus one bubble, so the widest arm jitter (1.06) lands exactly on the
-   edge. The inner ring clears the wordmark block on every axis: its vertical
-   semi-axis is larger than half the core plus a bubble radius, which is what
-   keeps bubbles from ever crossing the centre. Durations are deliberately
-   non-multiples so the three rings never resynchronise. */
-.orbit__ring--1 {
-    --tilt: -9deg;
-    --k: 0.72;
-    --ik: 1.3889;
-    --rr: calc((var(--field) - 92px) * 0.315);
-    --dur: 76s;
-    --dir: normal;
-    --dir-rev: reverse;
-    --size: 92px;
-    --size-open: 214px;
-    --label: 10px;
-}
-
-.orbit__ring--2 {
-    --tilt: 6deg;
-    --k: 0.75;
-    --ik: 1.3333;
-    --rr: calc((var(--field) - 88px) * 0.385);
-    --dur: 104s;
-    --dir: reverse;
-    --dir-rev: normal;
-    --size: 88px;
-    --size-open: 220px;
-    --label: 9.5px;
-}
-
-.orbit__ring--3 {
-    --tilt: -3deg;
-    --k: 0.78;
-    --ik: 1.2821;
-    --rr: calc((var(--field) - 84px) * 0.472);
-    --dur: 138s;
-    --dir: normal;
-    --dir-rev: reverse;
-    --size: 84px;
-    --size-open: 214px;
-    --label: 9.5px;
-}
-
-/* ---- Seats ------------------------------------------------------------ */
-/* Angles are spread unevenly and the radii carry a few percent of jitter, so
-   no ring ever looks like a dial. */
-.orbit__ring--1 .orbit__arm:nth-child(1) { --a: 22deg;  --r: calc(var(--rr) * 1.00); --drift: 15s; }
-.orbit__ring--1 .orbit__arm:nth-child(2) { --a: 172deg; --r: calc(var(--rr) * 0.94); --drift: 19s; }
-.orbit__ring--1 .orbit__arm:nth-child(3) { --a: 268deg; --r: calc(var(--rr) * 1.05); --drift: 23s; }
-
-.orbit__ring--2 .orbit__arm:nth-child(1) { --a: 52deg;  --r: calc(var(--rr) * 1.02); --drift: 17s; }
-.orbit__ring--2 .orbit__arm:nth-child(2) { --a: 129deg; --r: calc(var(--rr) * 0.95); --drift: 21s; }
-.orbit__ring--2 .orbit__arm:nth-child(3) { --a: 213deg; --r: calc(var(--rr) * 1.05); --drift: 14s; }
-.orbit__ring--2 .orbit__arm:nth-child(4) { --a: 318deg; --r: calc(var(--rr) * 0.97); --drift: 25s; }
-
-.orbit__ring--3 .orbit__arm:nth-child(1) { --a: 18deg;  --r: calc(var(--rr) * 1.00); --drift: 22s; }
-.orbit__ring--3 .orbit__arm:nth-child(2) { --a: 104deg; --r: calc(var(--rr) * 0.95); --drift: 16s; }
-.orbit__ring--3 .orbit__arm:nth-child(3) { --a: 192deg; --r: calc(var(--rr) * 1.05); --drift: 26s; }
-.orbit__ring--3 .orbit__arm:nth-child(4) { --a: 281deg; --r: calc(var(--rr) * 0.97); --drift: 19s; }
-
-/* ---- Static fallback -------------------------------------------------- */
-/* Narrow viewports have no hover, and the root page cannot ship a tap handler
-   under its CSP — so below the breakpoint (and whenever motion is reduced)
-   the same markup collapses into a plain readable card grid. */
-@media (max-width: 900px), (prefers-reduced-motion: reduce) {
-    .home {
-        padding: 32px 0;
-    }
-
-    .orbit {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
-        gap: 10px;
-        width: min(920px, 100%);
-        height: auto;
-    }
-
-    .orbit__ring,
-    .orbit__spin,
-    .orbit__arm,
-    .orbit__node {
-        display: contents;
-    }
-
-    .orbit__core {
-        position: static;
-        grid-column: 1 / -1;
-        width: 100%;
-        margin-bottom: 22px;
-        transform: none;
-    }
-
-    /* The orbit-only decoration still generates a box here: display:contents
-       on the arm does not suppress its ::after. */
-    .orbit__arm::after {
-        display: none;
-    }
-
-    .orbit__bubble {
-        position: static;
-        display: block;
-        width: auto;
-        height: auto;
-        padding: 13px 15px;
-        border-radius: 12px;
-        text-align: left;
-        transform: none;
-        transition: none;
-    }
-
-    .orbit__label {
+@media (max-width: 560px) {
+    .sample__legend {
         font-size: 13px;
-    }
-
-    .orbit__text {
-        max-height: none;
-        margin-top: 5px;
-        opacity: 1;
-        font-size: 12.5px;
     }
 }
 
@@ -819,11 +633,6 @@ body.home-page::before {
     .home__mark,
     .home__title,
     .home__intro {
-        animation: none;
-    }
-
-    .orbit__spin,
-    .orbit__node {
         animation: none;
     }
 }

@@ -15,8 +15,8 @@
 </head>
 <body class="home-page">
     <main class="home">
-        <div class="orbit">
-            <div class="orbit__core">
+        <section class="hero">
+            <div class="hero__core">
                 <svg class="home__mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
                     <path d="M 73.4 31.1 A 33.4 33.4 0 1 0 73.4 68.9" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
                     <path d="M 59.9 33.4 A 21.6 21.6 0 1 0 59.9 66.6" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
@@ -29,110 +29,63 @@
                     keine kommerzielle Nutzung.
                 </p>
             </div>
+        </section>
 
-            <div class="orbit__ring orbit__ring--1">
-                <div class="orbit__spin">
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Mehrdimensionales Ranking</span>
-                                <span class="orbit__text">Priorität entsteht aus mehreren unabhängigen Metriken — nie aus einem einzelnen KI-Score.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Dubletten&shy;erkennung</span>
-                                <span class="orbit__text">Vektor-Embeddings erkennen dieselbe Meldung aus mehreren Quellen. Sie lesen sie einmal.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Täglich &amp; wöchentlich</span>
-                                <span class="orbit__text">Ein Briefing am Morgen, ein Rückblick zum Wochenende — beides einzeln abwählbar.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <section class="samples" aria-labelledby="samples-title">
+            <div class="samples__head">
+                <p class="samples__eyebrow">Beispielausgaben</p>
+                <h2 class="samples__title" id="samples-title">So sieht eine Ausgabe aus</h2>
+                <p class="samples__note">
+                    Beide Bilder kommen aus demselben Renderer, der auch zustellt — nachgebaut ist
+                    hier nichts. Gekürzt, und die Quellennamen sind unkenntlich gemacht.
+                    Beide Formate sind einzeln abwählbar.
+                </p>
             </div>
 
-            <div class="orbit__ring orbit__ring--2">
-                <div class="orbit__spin">
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Handlungs&shy;signale</span>
-                                <span class="orbit__text">Jede Meldung trägt ein Label: Action, Watch oder FYI.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Topic Pulse</span>
-                                <span class="orbit__text">Jedes Briefing öffnet mit den drei dominanten Themen des Tages.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Lückenlose Abdeckung</span>
-                                <span class="orbit__text">Jede Quelle läuft in einem durchgehenden, checkpoint-gestützten Zeitfenster.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Mehrsprachige Quellen</span>
-                                <span class="orbit__text">Englische, deutsche, französische und weitere Quellen — nativ verfolgt, gemeinsam zugestellt.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="samples__grid">
+                <figure class="sample sample--daily">
+                    <figcaption class="sample__cap">
+                        <span class="sample__kind">Daily Briefing</span>
+                        <span class="sample__when">jeden Morgen</span>
+                    </figcaption>
 
-            <div class="orbit__ring orbit__ring--3">
-                <div class="orbit__spin">
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Verarbeitungs&shy;pipeline</span>
-                                <span class="orbit__text">Eine mehrstufige Verarbeitung klassifiziert, fasst zusammen und labelt jede Meldung.</span>
-                            </div>
-                        </div>
+                    <div class="sample__sheet">
+                        <img class="sample__page" loading="lazy" decoding="async" src="/email-sample-daily.webp" width="1360" height="4388"
+                             alt="Tägliches Curiosa-Briefing: Kopfzeile mit drei Themen des Tages, ein Abschnitt mit Entscheidungen und Bußgeldern, fünf gerankte Nachrichtenkarten und darunter der kompakte Radar-Abschnitt.">
+                        <img class="sample__page sample__page--haze" loading="lazy" decoding="async" src="/email-sample-daily.webp" width="1360" height="4388"
+                             alt="" aria-hidden="true">
                     </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Quellen&shy;auswahl</span>
-                                <span class="orbit__text">Welche Quellen im täglichen Briefing erscheinen, ist frei wählbar.</span>
-                            </div>
-                        </div>
+
+                    <p class="sample__legend">
+                        Oben die drei Themen des Tages, dann Entscheidungen und Bußgelder, dann die
+                        gerankten Karten. Karte 01 hat zwei weitere Quellen zur selben Meldung
+                        eingesammelt — Sie lesen sie einmal. Was heute keinen Datenschutzbezug hat,
+                        rutscht ans Ende ins Radar: eine Zeile statt einer Karte.
+                    </p>
+                </figure>
+
+                <figure class="sample sample--weekly">
+                    <figcaption class="sample__cap">
+                        <span class="sample__kind">Weekly Briefing</span>
+                        <span class="sample__when">zum Wochenende</span>
+                    </figcaption>
+
+                    <div class="sample__sheet">
+                        <img class="sample__page" loading="lazy" decoding="async" src="/email-sample-weekly.webp" width="1360" height="2548"
+                             alt="Wöchentliches Curiosa-Briefing: Kopfzeile, ein Block zur Aktivität der Aufsichtsbehörden in dieser Woche und fünf gerankte Nachrichtenkarten mit Wochentag und Handlungssignal.">
+                        <img class="sample__page sample__page--haze" loading="lazy" decoding="async" src="/email-sample-weekly.webp" width="1360" height="2548"
+                             alt="" aria-hidden="true">
                     </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Original&shy;titel</span>
-                                <span class="orbit__text">Titel und Quelle bleiben unverändert. Nur die Zusammenfassung entsteht per KI.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="orbit__arm">
-                        <div class="orbit__node">
-                            <div class="orbit__bubble" tabindex="0">
-                                <span class="orbit__label">Kuratiert</span>
-                                <span class="orbit__text">Quellen, Kategorien und Ranking-Regeln werden von Hand gepflegt.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                    <p class="sample__legend">
+                        Der Rückblick öffnet mit der Aktivität der Aufsichtsbehörden und der
+                        Veränderung zur Vorwoche. Danach die stärksten Meldungen der Woche, jede mit
+                        Tag, Kategorie und einem Handlungssignal — Handeln, Beobachten oder
+                        zur Kenntnis.
+                    </p>
+                </figure>
             </div>
-        </div>
+        </section>
     </main>
 </body>
 </html>
