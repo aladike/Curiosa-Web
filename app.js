@@ -293,12 +293,11 @@
                     badges.appendChild(newBadge);
                 }
 
-                if (category.id === "authorities") {
-                    const authorityBadge = document.createElement("span");
-                    authorityBadge.className = "pill pill-authorities";
-                    authorityBadge.textContent = curT("Authorities");
-                    badges.appendChild(authorityBadge);
-                }
+                /* No per-row "Authorities" badge: the row already sits inside
+                   the Authorities card, under its heading and against its red
+                   rail, and the filter never lifts a row out of its group. On
+                   forty-one rows the badge was the loudest thing on the page
+                   and said nothing the card had not already said. */
 
                 const formatBadge = document.createElement("span");
                 formatBadge.className = "pill pill-format";
