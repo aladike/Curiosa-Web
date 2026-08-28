@@ -33,19 +33,26 @@
     </header>
 
     <main class="page-shell">
-        <section class="hero-card">
-            <p class="eyebrow" data-i18n>Curiosa Settings</p>
-            <h1 data-i18n>Manage your Curiosa subscription</h1>
-            <p class="intro" data-i18n>
-                Adjust delivery and source preferences for your Curiosa briefings.
-            </p>
-            <div id="top-actions" class="top-actions is-hidden">
+        <section class="masthead">
+            <div class="masthead__top">
+                <p class="masthead__lockup">
+                    <span class="masthead__brand">Curiosa</span><span class="masthead__kind" data-i18n>Preferences</span>
+                </p>
+                <h1 data-i18n>Manage your Curiosa subscription</h1>
+                <p class="intro" data-i18n>
+                    Adjust delivery and source preferences for your Curiosa briefings.
+                </p>
+            </div>
+            <div id="top-actions" class="masthead__bar is-hidden">
                 <span id="subscription-status-pill" class="status-pill"></span>
                 <div class="top-action-buttons">
                     <button id="unsubscribe-button" class="button button-danger is-hidden" type="button" data-i18n>Unsubscribe</button>
                     <button id="resubscribe-button" class="button button-success-soft is-hidden" type="button" data-i18n>Resubscribe</button>
                 </div>
             </div>
+        </section>
+
+        <div class="page-notes">
             <div id="flow-banner" class="flow-banner is-hidden" role="status" aria-live="polite">
                 <div class="flow-banner-copy">
                     <strong id="flow-banner-title"></strong>
@@ -57,7 +64,7 @@
                 DB-managed settings.
             </p>
             <p id="status-message" class="note is-hidden" role="status" aria-live="polite"></p>
-        </section>
+        </div>
 
         <div class="settings-layout">
             <aside class="summary-rail">

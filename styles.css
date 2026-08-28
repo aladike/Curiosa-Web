@@ -1,8 +1,22 @@
-/* Curiosa subscription-control pages — light UI.
-   styles.css is loaded only by /subscription-configuration/ and /unsubscribe/,
-   so it ships a single committed light theme: a soft off-white canvas with a
-   faint brand grid, crisp white panels, and dark-navy header/footer chrome that
-   frames the page. There is no OS light/dark split — the rules below also
+/* Curiosa subscription-control pages — the daily briefing's design, as a UI.
+
+   styles.css is loaded only by /subscription-configuration/ and /unsubscribe/.
+   Both pages are reached from a link at the bottom of an issue, so they are
+   read seconds after the email itself: the palette, the type stack and the
+   three structural idioms below are lifted from core/email_style_tokens.py and
+   output/templates/email_template.html rather than invented here.
+
+     1. The masthead is the email's header block — navy #14233B, the
+        "Curiosa — <name>" lockup, a hairline in white at 10%, and a strip
+        under it where the email puts Topic Pulse and these pages put status.
+     2. Every section opens the way NACHRICHTEN and RADAR do: a small
+        uppercase label, a hairline rule running to the end of the line, and a
+        count badge sitting on it.
+     3. Cards carry a left rail in their category colour, the same 3px rail an
+        item card has in the issue. Authorities take the red the email gives a
+        supervisory authority; everything else takes the neutral slate.
+
+   One committed light theme, no OS light/dark split — the rules here also
    neutralize site.css's prefers-color-scheme block, which styles.css outranks
    by load order. Long checkbox lists are the whole point of these pages, and
    they stay far more legible on light. */
@@ -10,43 +24,71 @@
 :root {
     color-scheme: light;
 
-    --canvas: #F4F6FA;
+    /* Foundations — EMAIL_STYLE_TOKENS, light theme. */
+    --canvas: #F4F5F7;
     --panel: #FFFFFF;
-    --panel-2: #F7F9FC;
-    --line: #E3E9F2;
-    --line-strong: #D2DBE8;
+    --panel-2: #F8F9FB;
+    --line: #DDE2EA;
+    --line-soft: #EDF0F5;
+    --line-strong: #C5CCD6;
 
-    --text: #142238;
-    --text-2: #3C4A63;
-    --muted: #63718B;
+    --text: #1B2537;
+    --text-2: #565D6B;
+    --muted: #6B7383;
+    --faint: #8A93A1;
 
-    --blue: #22509E;
-    --blue-solid: #1E3A8A;
-    --blue-solid-hover: #274CAB;
-    --blue-tint: #EDF3FF;
-    --blue-tint-line: #CFDDF7;
+    --navy: #14233B;
+    --navy-line: rgba(255, 255, 255, 0.10);
+    --navy-text: #BFCADB;
+    --navy-text-2: #93A5C0;
+    --navy-text-3: #A9BAD2;
 
-    --orange: #A8580C;
-    --orange-tint: #FDF4E8;
-    --orange-tint-line: #EFD8B4;
+    --link: #2F5D8C;
+    --link-hover: #24486D;
 
-    --green: #15803D;
-    --green-tint: #E9F7EF;
-    --green-tint-line: #B4DEC5;
+    /* Section heads: the news head is the default, the decisions head is what
+       the authorities group borrows. */
+    --sec-label: #25314A;
+    --sec-count-bg: #DCE3EF;
+    --sec-rule: #D8DEE8;
+    --sec-auth-label: #9B1C1C;
+    --sec-auth-count-bg: #F6DEDE;
+    --sec-auth-rule: #E7CFCF;
+    --sec-quiet-label: #6B7383;
+    --sec-quiet-count-bg: #E4E7ED;
+
+    /* Category rails, straight off the item cards. */
+    --rail-authority: #C4423F;
+    --rail-neutral: #7B8DA8;
+    --authority-text: #A93532;
+    --authority-tint: #FBF0F0;
+    --authority-line: #EED6D5;
+
+    --green: #137256;
+    --green-tint: #E8F4EF;
+    --green-line: #C4E2D6;
 
     --red: #B3261E;
-    --red-tint: #FDECEB;
-    --red-tint-line: #F3C6C2;
+    --red-tint: #FBEEED;
+    --red-line: #EFCECB;
 
-    --shadow-card: 0 1px 2px rgba(16, 32, 64, 0.05), 0 14px 30px -22px rgba(16, 32, 64, 0.35);
-    --shadow-bar: 0 -1px 0 rgba(16, 32, 64, 0.07), 0 -12px 30px -20px rgba(16, 32, 64, 0.45);
+    /* Flat, close to the page: the issue has no lifted surfaces either. */
+    --shadow-card: 0 1px 2px rgba(20, 35, 59, 0.04);
+    --shadow-masthead: 0 10px 26px -20px rgba(20, 35, 59, 0.55);
+    --shadow-bar: 0 -1px 0 rgba(20, 35, 59, 0.06), 0 -12px 30px -22px rgba(20, 35, 59, 0.4);
 
     --radius-card: 12px;
-    --radius: 9px;
-    --radius-sm: 7px;
+    --radius: 10px;
+    --radius-sm: 8px;
+    --radius-chip: 4px;
 
     /* Kept for compatibility with any shared references. */
-    --brand-blue: var(--blue);
+    --panel-2-legacy: var(--panel-2);
+    --brand-blue: var(--link);
+    --blue: var(--link);
+    --blue-solid: var(--link);
+    --blue-tint: #EAF0F7;
+    --blue-tint-line: #CBD9E7;
 }
 
 * {
@@ -58,94 +100,88 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    /* The issue's stack, so a heading here sets the same as a headline there. */
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
     color: var(--text);
     background: var(--canvas);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Viewport-anchored tint pools behind everything (below the grid). */
+/* The issue is a flat sheet on a flat ground. The tint pools and the brand
+   grid that used to sit behind these pages were the one thing that read as a
+   different product, so both are switched off here rather than restyled. */
 body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    pointer-events: none;
-    background:
-        radial-gradient(1000px 680px at 84% -16%, rgba(30, 58, 138, 0.07), transparent 62%),
-        radial-gradient(820px 600px at 4% 118%, rgba(30, 58, 138, 0.05), transparent 58%);
+    content: none;
 }
 
-/* Faint brand grid, fading toward the lower half. Overrides site.css so the
-   grid stays navy-on-light even when the OS prefers dark. */
 body::before {
-    background-image:
-        linear-gradient(90deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(30, 58, 138, 0.05) 1px, transparent 1px);
-    background-size: 56px 56px;
-    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 46%, transparent 78%);
-    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 46%, transparent 78%);
+    content: none;
 }
 
 /* ---- Header chrome (force dark navy; site.css gates its dark styling by OS). */
 .site-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--navy-line);
     background: rgba(20, 35, 59, 0.94);
-    box-shadow: 0 1px 14px rgba(16, 32, 64, 0.18);
+    box-shadow: none;
 }
 
 .site-logo {
-    background: linear-gradient(180deg, #ffffff 0%, #d7e4ff 55%, #9dbcff 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: #dbe6ff;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
 }
 
 .site-logo span {
-    color: inherit;
-    -webkit-text-fill-color: transparent;
+    color: var(--navy-text-2);
 }
 
 .site-nav__link {
-    color: #C4D0E4;
+    color: var(--navy-text);
 }
 
 .site-nav__link:hover {
     color: #FFFFFF;
-    background: rgba(157, 188, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .site-nav__link:focus-visible {
-    outline-color: #9DBCFF;
+    outline: 2px solid var(--navy-text-2);
+    outline-offset: 2px;
 }
 
 .site-nav__link.is-current {
     color: #FFFFFF;
-    background: rgba(157, 188, 255, 0.16);
-    box-shadow: inset 0 0 0 1px rgba(157, 188, 255, 0.28);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 1px var(--navy-line);
 }
 
 .lang-toggle {
-    border-color: rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 1px var(--navy-line);
 }
 
 .lang-toggle__option {
-    color: #A9B6CC;
+    color: var(--navy-text-2);
 }
 
 .lang-toggle__option.is-active {
-    background: rgba(157, 188, 255, 0.18);
-    color: #E4EDFF;
-    box-shadow: inset 0 0 0 1px rgba(157, 188, 255, 0.32);
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: none;
+}
+
+.site-footer {
+    flex-shrink: 0;
+    background: var(--navy);
+    color: var(--navy-text-2);
 }
 
 /* ---- Shell ------------------------------------------------------------ */
 .page-shell {
     width: min(1080px, calc(100% - 40px));
-    margin: 28px auto 0;
+    margin: 24px auto 0;
     /* Room for the fixed action bar so the last card is never trapped under it. */
     padding-bottom: 104px;
 }
@@ -155,8 +191,89 @@ main {
     flex: 1 0 auto;
 }
 
-.site-footer {
-    flex-shrink: 0;
+/* ---- Masthead --------------------------------------------------------- */
+/* The email header, on a page. Same navy, same lockup, same hairline, and the
+   strip below it holds status where the issue holds Topic Pulse. */
+.masthead {
+    overflow: hidden;
+    margin-bottom: 18px;
+    border-radius: var(--radius-card);
+    background: var(--navy);
+    box-shadow: var(--shadow-masthead);
+}
+
+.masthead__top {
+    padding: 22px 24px 20px;
+}
+
+.masthead__lockup {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    margin: 0 0 10px;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.masthead__brand {
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+.masthead__kind {
+    font-weight: 400;
+    color: var(--navy-text-3);
+}
+
+/* The dash belongs to the lockup, not to either label — keeping it in CSS
+   also keeps it out of the i18n dictionary, which is keyed on the English
+   text of the element it sits in. */
+.masthead__kind::before {
+    content: "— ";
+}
+
+.masthead h1 {
+    margin: 0 0 8px;
+    font-size: clamp(21px, 2.4vw, 26px);
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.masthead .intro {
+    max-width: 62ch;
+    color: var(--navy-text);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.masthead__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 13px 24px;
+    border-top: 1px solid var(--navy-line);
+}
+
+.masthead__bar.is-hidden {
+    display: none;
+}
+
+/* Notes and banners sit under the masthead, on the light ground — a warm
+   note inside a navy panel reads as an error in the chrome. */
+.page-notes {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.page-notes:empty {
+    display: none;
 }
 
 /* ---- Surfaces --------------------------------------------------------- */
@@ -173,21 +290,12 @@ main {
 
 .hero-card {
     overflow: hidden;
-    padding: 24px 24px 22px;
-    margin-bottom: 16px;
-}
-
-/* Thin brand accent along the top edge of the hero. */
-.hero-card::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: 2px;
-    background: linear-gradient(90deg, #1E3A8A 0%, rgba(30, 58, 138, 0.4) 60%, rgba(168, 88, 12, 0.4) 100%);
+    padding: 22px 24px;
+    margin-bottom: 18px;
 }
 
 .card {
-    padding: 20px 22px;
+    padding: 18px 20px 20px;
     margin-bottom: 16px;
 }
 
@@ -217,34 +325,39 @@ main {
 }
 
 .summary-card {
-    padding: 18px 18px 16px;
+    padding: 16px 18px 18px;
 }
 
 .summary-card h2 {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .summary-list {
     display: grid;
-    gap: 8px;
+    gap: 0;
     margin: 0;
 }
 
+/* Hairline-separated rows, the way the Radar block lists its items — boxed
+   rows inside a boxed card was one border too many. */
 .summary-row {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 10px;
-    padding: 7px 10px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    background: var(--panel-2);
+    padding: 9px 0;
+    border-top: 1px solid var(--line-soft);
+}
+
+.summary-row:first-child {
+    border-top: 0;
+    padding-top: 2px;
 }
 
 .summary-row dt {
     color: var(--muted);
-    font-size: 12.5px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .summary-row dd {
@@ -253,70 +366,84 @@ main {
     font-weight: 700;
     color: var(--text);
     text-align: right;
+    font-variant-numeric: tabular-nums;
 }
 
 .summary-row dd.is-off {
-    color: var(--muted);
+    color: var(--faint);
     font-weight: 600;
 }
 
 .summary-hint {
-    margin: 12px 0 0;
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-soft);
     font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--faint);
+}
+
+/* ---- Section heads ---------------------------------------------------- */
+/* LABEL ————————————————— [n]. The rule is the flex filler, so it always
+   ends exactly where the badge begins. */
+.card-heading {
+    margin-bottom: 16px;
+}
+
+h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--sec-label);
+}
+
+h2::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--sec-rule);
+}
+
+.card-heading p {
+    margin: 9px 0 0;
+    font-size: 13.5px;
     line-height: 1.55;
     color: var(--muted);
 }
 
 /* ---- Type ------------------------------------------------------------- */
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    margin: 0 0 12px;
-    padding: 4px 9px;
-    border: 1px solid var(--blue-tint-line);
-    border-radius: 6px;
-    font-size: 10.5px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--blue);
-    background: var(--blue-tint);
-}
-
 h1 {
     margin: 0 0 10px;
-    font-size: clamp(24px, 3vw, 31px);
-    line-height: 1.14;
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.18;
     letter-spacing: -0.022em;
     font-weight: 700;
     color: var(--text);
 }
 
-h2 {
-    margin: 0;
-    font-size: 16.5px;
-    font-weight: 700;
-    letter-spacing: -0.012em;
-    color: var(--text);
-}
-
 .intro {
     margin: 0;
-    max-width: 56ch;
-    font-size: 15px;
+    max-width: 58ch;
+    font-size: 14.5px;
     line-height: 1.62;
     color: var(--text-2);
 }
 
-.card-heading {
-    margin-bottom: 16px;
-}
-
-.card-heading p {
-    margin: 5px 0 0;
-    font-size: 13.5px;
-    line-height: 1.55;
-    color: var(--muted);
+/* The old badge-style eyebrow is superseded by the masthead lockup; the rule
+   stays so any page still carrying one degrades to a quiet kicker. */
+.eyebrow {
+    display: block;
+    margin: 0 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--faint);
 }
 
 /* ---- Status / notes / banners ---------------------------------------- */
@@ -325,11 +452,7 @@ h2 {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin: 18px 0 0;
-    padding: 11px 13px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--panel-2);
+    flex-wrap: wrap;
 }
 
 .top-action-buttons {
@@ -343,14 +466,16 @@ h2 {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    padding: 5px 12px;
+    padding: 4px 11px;
     border: 1px solid transparent;
     border-radius: 999px;
     font-size: 12.5px;
     font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
-/* Small state dot so the pill reads at a glance, not only by colour. */
+/* Small state dot so the pill reads at a glance, not only by colour. It is
+   the Topic Pulse dot: same size, same place in the line. */
 .status-pill::before {
     content: "";
     width: 7px;
@@ -359,33 +484,55 @@ h2 {
     background: currentColor;
 }
 
+/* On the navy strip the pills are ghosts with a coloured dot, the way the
+   pulse categories are — a filled light pill would punch a hole in it. */
+.masthead__bar .status-pill {
+    color: var(--navy-text);
+    background: transparent;
+    border-color: var(--navy-line);
+}
+
+.masthead__bar .status-pill-active::before {
+    background: #66C09A;
+}
+
+.masthead__bar .status-pill-inactive::before {
+    background: #E06B67;
+}
+
+.masthead__bar .status-pill-neutral::before {
+    background: var(--navy-text-2);
+}
+
 .status-pill-active {
     color: var(--green);
     background: var(--green-tint);
-    border-color: var(--green-tint-line);
+    border-color: var(--green-line);
 }
 
 .status-pill-inactive {
     color: var(--red);
     background: var(--red-tint);
-    border-color: var(--red-tint-line);
+    border-color: var(--red-line);
 }
 
 .status-pill-neutral {
-    color: #4A5872;
-    background: #EEF1F7;
-    border-color: var(--line-strong);
+    color: var(--text-2);
+    background: var(--canvas);
+    border-color: var(--line);
 }
 
+/* Notes carry their meaning on a left rail, like an item card. */
 .note {
-    margin: 12px 0 0;
-    padding: 11px 13px;
-    border: 1px solid var(--blue-tint-line);
-    border-radius: var(--radius);
+    margin: 0;
+    padding: 11px 14px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--rail-neutral);
+    border-radius: var(--radius-sm);
     font-size: 13.5px;
-    line-height: 1.5;
-    color: #1F3566;
-    background: var(--blue-tint);
+    line-height: 1.55;
+    color: var(--text-2);
+    background: var(--panel);
 }
 
 .note.is-hidden {
@@ -393,15 +540,17 @@ h2 {
 }
 
 .note-warm {
-    border-color: var(--orange-tint-line);
-    background: var(--orange-tint);
-    color: #8A4B0B;
+    border-color: #EADFC6;
+    border-left-color: #C8912F;
+    background: #FDF8EF;
+    color: #8A5B12;
 }
 
 .note-success {
-    border-color: var(--green-tint-line);
+    border-color: var(--green-line);
+    border-left-color: #3D9E7A;
     background: var(--green-tint);
-    color: #146334;
+    color: var(--green);
 }
 
 .is-hidden {
@@ -412,11 +561,12 @@ h2 {
     display: flex;
     align-items: flex-start;
     gap: 14px;
-    margin: 14px 0 0;
+    margin: 0;
     padding: 13px 15px;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--panel-2);
+    border-left: 3px solid var(--rail-neutral);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
 }
 
 .flow-banner.is-hidden {
@@ -425,36 +575,39 @@ h2 {
 
 .flow-banner-copy strong {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     font-size: 14px;
+    font-weight: 700;
     color: var(--text);
 }
 
 .flow-banner-copy p {
     margin: 0;
     font-size: 13.5px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--text-2);
     background: transparent;
 }
 
 .flow-banner-warm {
-    border-color: var(--orange-tint-line);
-    background: var(--orange-tint);
+    border-color: #EADFC6;
+    border-left-color: #C8912F;
+    background: #FDF8EF;
 }
 
 .flow-banner-warm .flow-banner-copy p {
-    color: #8A4B0B;
+    color: #8A5B12;
     background: transparent;
 }
 
 .flow-banner-success {
-    border-color: var(--green-tint-line);
+    border-color: var(--green-line);
+    border-left-color: #3D9E7A;
     background: var(--green-tint);
 }
 
 .flow-banner-success .flow-banner-copy p {
-    color: #146334;
+    color: var(--green);
 }
 
 /* ---- Delivery toggles ------------------------------------------------- */
@@ -470,8 +623,9 @@ h2 {
     align-items: center;
     padding: 14px 15px;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--panel-2);
+    border-left: 3px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
     cursor: pointer;
     transition: border-color 0.16s ease, background 0.16s ease;
 }
@@ -493,8 +647,10 @@ h2 {
 
 .toggle-card strong {
     display: block;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     color: var(--text);
 }
 
@@ -513,7 +669,7 @@ h2 {
     height: 24px;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
-    background: #E7ECF4;
+    background: #E7EAEF;
     transition: background 0.18s ease, border-color 0.18s ease;
 }
 
@@ -526,13 +682,13 @@ h2 {
     height: 18px;
     border-radius: 50%;
     background: #FFFFFF;
-    box-shadow: 0 1px 3px rgba(16, 32, 64, 0.3);
+    box-shadow: 0 1px 3px rgba(20, 35, 59, 0.28);
     transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .toggle-card input:checked ~ .switch {
-    background: var(--blue-solid);
-    border-color: var(--blue-solid);
+    background: var(--link);
+    border-color: var(--link);
 }
 
 .toggle-card input:checked ~ .switch::after {
@@ -540,13 +696,13 @@ h2 {
 }
 
 .toggle-card input:focus-visible ~ .switch {
-    outline: 2px solid var(--blue-solid);
+    outline: 2px solid var(--link);
     outline-offset: 2px;
 }
 
+/* On is the rail lighting up, not the card filling in. */
 .toggle-card:has(input:checked) {
-    border-color: #A9C1EE;
-    background: var(--blue-tint);
+    border-left-color: var(--sec-label);
 }
 
 /* ---- Source mode ------------------------------------------------------ */
@@ -563,8 +719,9 @@ h2 {
     align-items: flex-start;
     padding: 12px 13px;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--panel-2);
+    border-left: 3px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
     cursor: pointer;
     transition: border-color 0.16s ease, background 0.16s ease;
 }
@@ -574,13 +731,14 @@ h2 {
     margin: 1px 0 0;
     width: 17px;
     height: 17px;
-    accent-color: var(--blue-solid);
+    accent-color: var(--link);
 }
 
 .mode-option strong {
     display: block;
     margin-bottom: 2px;
     font-size: 13.5px;
+    font-weight: 700;
     color: var(--text);
 }
 
@@ -592,12 +750,11 @@ h2 {
 }
 
 .mode-option:has(input:checked) {
-    border-color: #A9C1EE;
-    background: var(--blue-tint);
+    border-left-color: var(--sec-label);
 }
 
 .mode-option:has(input:checked) strong {
-    color: var(--blue-solid);
+    color: var(--text);
 }
 
 /* ---- Source filter ---------------------------------------------------- */
@@ -605,7 +762,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .filter-input {
@@ -613,8 +770,8 @@ h2 {
     min-width: 0;
     appearance: none;
     padding: 9px 12px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
     background: var(--panel);
     color: var(--text);
     font-family: inherit;
@@ -622,13 +779,13 @@ h2 {
 }
 
 .filter-input::placeholder {
-    color: #94A1B7;
+    color: var(--faint);
 }
 
 .filter-input:focus-visible {
-    outline: 2px solid var(--blue-solid);
+    outline: 2px solid var(--link);
     outline-offset: 1px;
-    border-color: var(--blue-solid);
+    border-color: var(--link);
 }
 
 .filter-count {
@@ -636,17 +793,18 @@ h2 {
     color: var(--muted);
     font-size: 12.5px;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ---- Sources by category ---------------------------------------------- */
 .sources-root {
     display: grid;
-    gap: 12px;
+    gap: 14px;
 }
 
 /* When every source is implied, the list stays visible but reads as inert. */
 .sources-root.is-locked {
-    opacity: 0.5;
+    opacity: 0.55;
     pointer-events: none;
 }
 
@@ -654,16 +812,16 @@ h2 {
     position: relative;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--panel-2);
+    border-left: 3px solid var(--rail-neutral);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
 }
 
 .category-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
-    padding: 12px 14px;
+    padding: 13px 14px;
     cursor: pointer;
     list-style: none;
 }
@@ -673,24 +831,34 @@ h2 {
 }
 
 .category-header:focus-visible {
-    outline: 2px solid var(--blue-solid);
+    outline: 2px solid var(--link);
     outline-offset: -2px;
 }
 
+/* The heading takes the whole line so its trailing rule can run up to the
+   count, exactly as a section head does in the issue. */
 .category-heading {
     display: flex;
     align-items: center;
     gap: 9px;
+    flex: 1 1 auto;
     min-width: 0;
+}
+
+.category-heading::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--sec-rule);
 }
 
 /* Disclosure caret, rotated by the open state of the surrounding details. */
 .category-caret {
     flex: 0 0 auto;
-    width: 8px;
-    height: 8px;
-    border-right: 2px solid var(--muted);
-    border-bottom: 2px solid var(--muted);
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid var(--faint);
+    border-bottom: 2px solid var(--faint);
     transform: rotate(-45deg);
     transition: transform 0.18s ease;
 }
@@ -702,28 +870,29 @@ h2 {
 .category-card h3,
 .category-title {
     margin: 0;
-    font-size: 14.5px;
+    font-size: 11.5px;
     font-weight: 700;
-    letter-spacing: 0.01em;
-    color: var(--text);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--sec-label);
 }
 
 .category-count {
     flex: 0 0 auto;
-    padding: 2px 9px;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background: var(--panel);
-    color: var(--muted);
-    font-size: 11.5px;
+    padding: 2px 8px;
+    border: 0;
+    border-radius: var(--radius-chip);
+    background: var(--sec-count-bg);
+    color: var(--sec-label);
+    font-size: 11px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 
 .category-count.is-full {
-    color: var(--blue);
-    background: var(--blue-tint);
-    border-color: var(--blue-tint-line);
+    background: var(--sec-count-bg);
+    color: var(--sec-label);
 }
 
 .category-body {
@@ -737,26 +906,24 @@ h2 {
     color: var(--muted);
 }
 
+/* An authority is red in the issue — the rail on its card, the label on its
+   chip, the head over the decisions block. Same three here. */
 .category-card-authorities {
-    border-color: var(--orange-tint-line);
-}
-
-.category-card-authorities::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(168, 88, 12, 0.75), rgba(168, 88, 12, 0.22) 70%, transparent);
+    border-left-color: var(--rail-authority);
 }
 
 .category-card-authorities .category-title {
-    color: var(--orange);
+    color: var(--sec-auth-label);
 }
 
+.category-card-authorities .category-heading::after {
+    background: var(--sec-auth-rule);
+}
+
+.category-card-authorities .category-count,
 .category-card-authorities .category-count.is-full {
-    color: var(--orange);
-    background: var(--orange-tint);
-    border-color: var(--orange-tint-line);
+    background: var(--sec-auth-count-bg);
+    color: var(--sec-auth-label);
 }
 
 .category-actions {
@@ -768,13 +935,15 @@ h2 {
 
 .category-action {
     appearance: none;
-    padding: 5px 11px;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-chip);
     background: var(--panel);
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--muted);
     cursor: pointer;
     transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
 }
@@ -788,28 +957,28 @@ h2 {
 }
 
 .category-action:hover {
-    background: #F0F4FA;
+    background: var(--canvas);
 }
 
 .category-action:focus-visible {
-    outline: 2px solid var(--blue-solid);
+    outline: 2px solid var(--link);
     outline-offset: 1px;
 }
 
 .sources-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
-    gap: 7px;
+    gap: 6px;
 }
 
 .source-card {
     display: flex;
-    gap: 11px;
+    gap: 10px;
     align-items: center;
-    padding: 9px 11px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    background: var(--panel);
+    padding: 8px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-chip);
+    background: var(--canvas);
     cursor: pointer;
     transition: border-color 0.16s ease, background 0.16s ease;
 }
@@ -820,9 +989,9 @@ h2 {
 
 .source-card input {
     flex: 0 0 auto;
-    width: 17px;
-    height: 17px;
-    accent-color: var(--blue-solid);
+    width: 16px;
+    height: 16px;
+    accent-color: var(--link);
 }
 
 .source-card > span {
@@ -830,19 +999,20 @@ h2 {
     flex: 1;
 }
 
-/* Name first, badges under it: side by side, a long source name and two pills
-   fight over the same 230px column and both end up wrapping. */
+/* Name and format chip on one line: with the redundant category badge gone
+   there is room, and ninety rows of two stacked lines was the bulk of the
+   page's height. */
 .source-title-row {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    font-weight: 600;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 3px 7px;
+    font-weight: 500;
 }
 
 .source-name {
-    font-size: 13.5px;
-    line-height: 1.3;
+    font-size: 13px;
+    line-height: 1.35;
     color: var(--text-2);
 }
 
@@ -853,64 +1023,60 @@ h2 {
     flex-wrap: wrap;
 }
 
+/* The issue's meta chip: uppercase, tracked out, quiet. */
 .pill {
     display: inline-flex;
     align-items: center;
-    padding: 2px 8px;
-    border: 1px solid transparent;
-    border-radius: 999px;
-    font-size: 10.5px;
+    padding: 1px 5px;
+    border: 0;
+    border-radius: 3px;
+    font-size: 9.5px;
     font-weight: 700;
-    letter-spacing: 0.02em;
-    line-height: 1.6;
+    letter-spacing: 0.07em;
+    line-height: 1.7;
+    text-transform: uppercase;
 }
 
 .pill-format {
-    color: var(--blue);
-    background: var(--blue-tint);
-    border-color: var(--blue-tint-line);
-}
-
-.pill-authorities {
-    color: var(--orange);
-    background: var(--orange-tint);
-    border-color: var(--orange-tint-line);
+    color: var(--faint);
+    background: #E9ECF1;
 }
 
 .pill-new {
     color: var(--green);
     background: var(--green-tint);
-    border-color: var(--green-tint-line);
 }
 
 .empty-note {
     margin: 0;
     padding: 12px 14px;
-    border: 1px dashed var(--line-strong);
-    border-radius: var(--radius);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-sm);
     color: var(--muted);
     font-size: 13px;
     text-align: center;
 }
 
-/* Selected-state emphasis. */
+/* Selected-state emphasis: the row comes forward onto white, it does not
+   change colour. Ninety blue rows is not a signal. */
 .source-card input:checked + span .source-name {
-    color: var(--blue-solid);
+    color: var(--text);
+    font-weight: 600;
 }
 
 .category-card-authorities .source-card input:checked + span .source-name {
-    color: var(--orange);
+    color: var(--text);
 }
 
 @supports selector(:has(*)) {
     .source-card:has(input:checked) {
-        border-color: #A9C1EE;
-        background: var(--blue-tint);
+        border-color: var(--line);
+        background: var(--panel);
     }
 
     .category-card-authorities .source-card:has(input:checked) {
-        border-color: #E5C08A;
-        background: var(--orange-tint);
+        border-color: var(--authority-line);
+        background: var(--panel);
     }
 }
 
@@ -923,36 +1089,35 @@ h2 {
     justify-content: center;
     appearance: none;
     border: 1px solid transparent;
-    border-radius: var(--radius);
-    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    padding: 9px 15px;
     font-family: inherit;
     font-size: 13.5px;
     font-weight: 700;
     line-height: 1.3;
     text-decoration: none;
     cursor: pointer;
-    transition: transform 0.14s ease, background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
 }
 
 .button:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.45;
 }
 
 .button:focus-visible {
-    outline: 2px solid var(--blue-solid);
+    outline: 2px solid var(--link);
     outline-offset: 2px;
 }
 
 .button-primary {
-    color: #ffffff;
-    background: var(--blue-solid);
-    border-color: var(--blue-solid);
-    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.22);
+    color: #FFFFFF;
+    background: var(--link);
+    border-color: var(--link);
 }
 
 .button-success {
-    color: #ffffff;
+    color: #FFFFFF;
     background: var(--green);
     border-color: var(--green);
 }
@@ -960,35 +1125,48 @@ h2 {
 .button-success-soft {
     color: var(--green);
     background: var(--green-tint);
-    border-color: var(--green-tint-line);
+    border-color: var(--green-line);
 }
 
 .button-danger {
     color: var(--red);
     background: var(--red-tint);
-    border-color: var(--red-tint-line);
+    border-color: var(--red-line);
 }
 
 .button-secondary {
-    color: #33415C;
+    color: var(--text-2);
     background: var(--panel);
-    border-color: var(--line-strong);
+    border-color: var(--line);
 }
 
 .button-quiet {
     color: var(--muted);
     background: transparent;
     border-color: transparent;
-    padding: 10px 12px;
+    padding: 9px 12px;
 }
 
 .button-quiet:hover {
     color: var(--text);
-    background: #EDF1F7;
+    background: var(--canvas);
 }
 
 .actions-card .button-primary {
     min-width: 150px;
+}
+
+/* Buttons sitting on the navy strip read as chrome, not as page actions. */
+.masthead__bar .button-danger {
+    color: #E79A97;
+    background: transparent;
+    border-color: rgba(224, 107, 103, 0.45);
+}
+
+.masthead__bar .button-success-soft {
+    color: #7FCCA9;
+    background: transparent;
+    border-color: rgba(102, 192, 154, 0.45);
 }
 
 /* ---- Sticky action bar ------------------------------------------------ */
@@ -1025,12 +1203,12 @@ h2 {
 }
 
 .action-bar.is-dirty {
-    border-top-color: var(--blue-tint-line);
-    background: rgba(240, 245, 255, 0.96);
+    border-top-color: var(--line-strong);
+    background: rgba(248, 249, 251, 0.96);
 }
 
 .action-bar.is-dirty .action-bar__note {
-    color: var(--blue);
+    color: var(--link);
     font-weight: 700;
 }
 
@@ -1044,43 +1222,45 @@ h2 {
 /* ---- Unsubscribe page ------------------------------------------------- */
 .unsubscribe-shell {
     width: min(620px, calc(100% - 32px));
-    margin: 44px auto 52px;
+    margin: 32px auto 48px;
 }
 
 .unsubscribe-card {
-    padding: 26px;
+    padding: 22px 24px 24px;
 }
 
-.unsubscribe-status-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 20px 0 0;
-    padding: 13px 15px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--panel-2);
-}
-
+/* The status row lives on the masthead strip, where the issue puts Topic
+   Pulse — so its label is navy-side text, not body text. */
 .unsubscribe-status-label {
     margin: 0;
-    color: var(--muted);
-    font-size: 13.5px;
-    font-weight: 700;
+    color: var(--navy-text-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.unsubscribe-card .note {
+    margin-top: 18px;
+}
+
+/* An invalid link hides the consequence list; the head it belongs to has to
+   go with it rather than stand over nothing. */
+.card-heading:has(+ .consequence-list.is-hidden) {
+    display: none;
 }
 
 .consequence-list {
-    margin: 18px 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
     display: grid;
-    gap: 7px;
+    gap: 9px;
 }
 
+/* The issue marks its "what this means" line with a small filled square. */
 .consequence-list li {
     position: relative;
-    padding-left: 22px;
+    padding-left: 20px;
     color: var(--text-2);
     font-size: 13.5px;
     line-height: 1.55;
@@ -1089,12 +1269,12 @@ h2 {
 .consequence-list li::before {
     content: "";
     position: absolute;
-    left: 6px;
-    top: 8px;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--line-strong);
+    left: 2px;
+    top: 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    background: var(--rail-neutral);
 }
 
 .unsubscribe-actions {
@@ -1102,7 +1282,7 @@ h2 {
     gap: 10px;
     flex-wrap: wrap;
     align-items: center;
-    margin: 22px 0 0;
+    margin: 20px 0 0;
 }
 
 /* Leaving is a two-step action, so the first step stays quiet: the loud
@@ -1110,7 +1290,7 @@ h2 {
 .unsubscribe-actions .button-danger-outline {
     color: var(--red);
     background: transparent;
-    border-color: var(--red-tint-line);
+    border-color: var(--red-line);
 }
 
 .unsubscribe-actions .button-danger-outline:not(:disabled):hover {
@@ -1118,10 +1298,11 @@ h2 {
 }
 
 .confirm-box {
-    margin: 20px 0 0;
-    padding: 15px 16px;
-    border: 1px solid var(--red-tint-line);
-    border-radius: var(--radius);
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    border: 1px solid var(--red-line);
+    border-left: 3px solid var(--rail-authority);
+    border-radius: var(--radius-sm);
     background: var(--red-tint);
 }
 
@@ -1139,40 +1320,39 @@ h2 {
 }
 
 .confirm-actions .button-danger:not(:disabled) {
-    color: #ffffff;
-    background: #B3261E;
-    border-color: #B3261E;
-    box-shadow: 0 6px 16px rgba(179, 38, 30, 0.22);
+    color: #FFFFFF;
+    background: var(--rail-authority);
+    border-color: var(--rail-authority);
 }
 
 .confirm-actions .button-danger:not(:disabled):hover {
-    background: #C22F26;
-    border-color: #C22F26;
+    background: #A93532;
+    border-color: #A93532;
 }
 
 /* ---- Interaction / responsive ---------------------------------------- */
 @media (hover: hover) {
     .toggle-card:hover,
-    .source-card:hover,
     .mode-option:hover {
         border-color: var(--line-strong);
     }
 
-    .category-action:hover {
-        border-color: #B9C7DC;
+    .source-card:hover {
+        border-color: var(--line-strong);
+        background: var(--panel);
     }
 
-    .button:not(:disabled):hover {
-        transform: translateY(-1px);
+    .category-action:hover {
+        border-color: var(--line-strong);
     }
 
     .button-primary:not(:disabled):hover {
-        background: var(--blue-solid-hover);
-        border-color: var(--blue-solid-hover);
+        background: var(--link-hover);
+        border-color: var(--link-hover);
     }
 
     .button-secondary:not(:disabled):hover {
-        background: #F0F4FA;
+        background: var(--canvas);
     }
 }
 
@@ -1202,12 +1382,24 @@ h2 {
 @media (max-width: 640px) {
     .page-shell {
         width: min(100% - 20px, 1080px);
-        margin-top: 18px;
+        margin-top: 16px;
         padding-bottom: 128px;
     }
 
+    .masthead__top {
+        padding: 18px 16px 16px;
+    }
+
+    /* Stacked, but the pill still hugs its label — stretched to the full
+       width it stops reading as a pill and starts reading as a row. */
+    .masthead__bar {
+        padding: 12px 16px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
     .hero-card {
-        padding: 18px;
+        padding: 18px 16px;
     }
 
     .card,
@@ -1226,10 +1418,12 @@ h2 {
         flex-wrap: wrap;
     }
 
+    /* Below this width the name alone fills the row, so the chip drops under
+       it rather than pushing the name into a two-line wrap. */
     .source-title-row {
         align-items: flex-start;
         flex-direction: column;
-        gap: 6px;
+        gap: 4px;
     }
 
     .flow-banner {
@@ -1253,7 +1447,7 @@ h2 {
 
     .unsubscribe-shell {
         width: min(100% - 20px, 620px);
-        margin: 22px auto 32px;
+        margin: 20px auto 32px;
     }
 
     .unsubscribe-card {

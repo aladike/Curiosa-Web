@@ -98,6 +98,7 @@
         "You can unsubscribe from Curiosa emails here. If you change your mind, you can re-subscribe using this same link.":
             "Hier können Sie sich von Curiosa-E-Mails abmelden. Wenn Sie es sich anders überlegen, können Sie sich über denselben Link wieder anmelden.",
         "Current subscription status": "Aktueller Abo-Status",
+        "What happens": "Was passiert",
         "Daily briefings and the weekly digest stop immediately.":
             "Tägliche Briefings und der wöchentliche Digest enden sofort.",
         "Your source and delivery preferences are kept, not deleted.":

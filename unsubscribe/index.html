@@ -33,16 +33,25 @@
     </header>
 
     <main class="unsubscribe-shell">
-        <section class="hero-card unsubscribe-card">
-            <p class="eyebrow" data-i18n>Curiosa Email</p>
-            <h1 data-i18n>Unsubscribe from Curiosa emails</h1>
-            <p class="intro" data-i18n>
-                You can unsubscribe from Curiosa emails here. If you change your mind, you can re-subscribe using this same link.
-            </p>
-
-            <div id="status-row" class="unsubscribe-status-row is-hidden">
+        <section class="masthead">
+            <div class="masthead__top">
+                <p class="masthead__lockup">
+                    <span class="masthead__brand">Curiosa</span><span class="masthead__kind" data-i18n>Unsubscribe</span>
+                </p>
+                <h1 data-i18n>Unsubscribe from Curiosa emails</h1>
+                <p class="intro" data-i18n>
+                    You can unsubscribe from Curiosa emails here. If you change your mind, you can re-subscribe using this same link.
+                </p>
+            </div>
+            <div id="status-row" class="masthead__bar is-hidden">
                 <p class="unsubscribe-status-label" data-i18n>Current subscription status</p>
                 <span id="status-badge" class="status-pill status-pill-neutral" data-i18n>Loading</span>
+            </div>
+        </section>
+
+        <section class="hero-card unsubscribe-card">
+            <div class="card-heading">
+                <h2 data-i18n>What happens</h2>
             </div>
 
             <ul id="consequences" class="consequence-list">
