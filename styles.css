@@ -1080,6 +1080,82 @@ h1 {
     }
 }
 
+/* ---- Personalisation -------------------------------------------------- */
+/* Options on the left, one rendered issue on the right. The preview is an
+   image because nothing on the request path can produce an email: the Edge
+   Function is Deno and the renderer is Python with Jinja and css_inline. A
+   mock built in the page would be a second definition of the design, and it
+   would drift — so the images come out of the real renderer instead, one per
+   combination, swapped by src. */
+.layout-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.layout-main {
+    display: grid;
+    gap: 16px;
+}
+
+.preview-card {
+    position: relative;
+    overflow: hidden;
+    padding: 18px 20px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--panel);
+    box-shadow: var(--shadow-card);
+}
+
+/* The same treatment the root page gives its samples: a sharp copy under a
+   blurred one, and the sheet itself masked away at the bottom edge, so the
+   issue dissolves mid-block instead of ending on a hard cut. */
+.preview-sheet {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    box-shadow: inset 0 0 0 1px var(--line-soft);
+    -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
+}
+
+.preview-page {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.preview-page--haze {
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: blur(6px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 78%, #000 97%);
+    mask-image: linear-gradient(180deg, transparent 78%, #000 97%);
+    pointer-events: none;
+}
+
+.preview-note {
+    margin: 16px 0 0;
+    color: var(--faint);
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+/* Side by side only once the preview can still be read at its own scale. */
+@media (min-width: 1000px) {
+    .layout-grid {
+        grid-template-columns: minmax(0, 1fr) 468px;
+    }
+
+    .preview-rail {
+        position: sticky;
+        top: 84px;
+    }
+}
+
 /* ---- Buttons ---------------------------------------------------------- */
 /* Anchors carry .button too (the unsubscribe page's "adjust preferences"
    action is a link), so the base rule has to work for both elements. */

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self' https://bwdddngjubszavoftljo.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; upgrade-insecure-requests">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="referrer" content="no-referrer">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Curiosa Personalisation</title>
+    <link rel="stylesheet" href="../site.css">
+    <script defer src="../site-i18n.js"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <script>
+        window.CURIOSA_MANAGE_CONFIG = window.CURIOSA_MANAGE_CONFIG || {
+            apiBaseUrl: "https://bwdddngjubszavoftljo.supabase.co/functions/v1/manage-subscription"
+        };
+    </script>
+
+    <header class="site-header">
+        <div class="site-header__inner site-container">
+            <a class="site-logo" href="/" aria-label="Curiosa">Curio<span>sa</span></a>
+            <nav class="site-nav" aria-label="Subscription controls">
+                <a class="site-nav__link is-current" aria-current="page" data-i18n href="../personalisation/">Personalisation</a>
+                <a class="site-nav__link" data-i18n href="../subscription-configuration/">Preferences</a>
+                <a class="site-nav__link" data-i18n href="../unsubscribe/">Unsubscribe</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="masthead">
+            <div class="masthead__top">
+                <p class="masthead__lockup">
+                    <span class="masthead__brand">Curiosa</span><span class="masthead__kind" data-i18n>Personalisation</span>
+                </p>
+                <h1 data-i18n>Choose how your briefing looks</h1>
+                <p class="intro" data-i18n>
+                    The stories and the ranking stay the same. What changes is how a card is
+                    drawn and where the fines block sits.
+                </p>
+            </div>
+        </section>
+
+        <div class="page-notes">
+            <p id="status-message" class="note is-hidden" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="layout-grid">
+            <div class="layout-main">
+                <section class="card">
+                    <div class="card-heading">
+                        <h2 data-i18n>Card layout</h2>
+                        <p data-i18n>How much weight each story gets.</p>
+                    </div>
+                    <div id="theme-options" class="mode-switch" role="radiogroup" aria-label="Card layout"></div>
+                </section>
+
+                <section class="card">
+                    <div class="card-heading">
+                        <h2 data-i18n>Decisions &amp; fines</h2>
+                        <p data-i18n>Where the block of decisions and fines sits in the issue.</p>
+                    </div>
+                    <div class="mode-switch" role="radiogroup" aria-label="Decisions and fines">
+                        <label class="mode-option">
+                            <input type="radio" name="decisions-position" value="before_news">
+                            <span>
+                                <strong data-i18n>Before the news</strong>
+                                <small data-i18n>The issue opens with the decisions.</small>
+                            </span>
+                        </label>
+                        <label class="mode-option">
+                            <input type="radio" name="decisions-position" value="after_news">
+                            <span>
+                                <strong data-i18n>After the news</strong>
+                                <small data-i18n>The news leads and the decisions follow.</small>
+                            </span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="preview-rail">
+                <div class="preview-card">
+                    <div class="card-heading">
+                        <h2 data-i18n>Preview</h2>
+                    </div>
+                    <div class="preview-sheet">
+                        <img id="preview-image" class="preview-page" src="/theme-default-before_news.webp"
+                             width="1360" height="1960" alt="" decoding="async">
+                        <img id="preview-haze" class="preview-page preview-page--haze" src="/theme-default-before_news.webp"
+                             width="1360" height="1960" alt="" aria-hidden="true" decoding="async">
+                    </div>
+                    <p class="preview-note" data-i18n>
+                        A sample issue rendered by the same code that sends yours — not your
+                        own latest briefing.
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <div id="action-bar" class="action-bar">
+        <div class="action-bar__inner">
+            <span id="action-bar-note" class="action-bar__note" role="status" aria-live="polite"></span>
+            <div class="action-bar__buttons">
+                <button id="discard-button" class="button button-secondary is-hidden" type="button" data-i18n>Discard changes</button>
+                <button id="save-button" class="button button-primary" type="button" disabled data-i18n>Save changes</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner site-container">
+            <div class="site-footer__brand">
+                <span class="site-footer__logo">Curio<span>sa</span></span>
+            </div>
+            <nav class="site-footer__nav" aria-label="Subscription controls">
+                <a data-i18n href="../personalisation/">Personalisation</a>
+                <a data-i18n href="../subscription-configuration/">Preferences</a>
+                <a data-i18n href="../unsubscribe/">Unsubscribe</a>
+            </nav>
+        </div>
+        <div class="site-footer__bottom site-container">
+            <span data-i18n>Subscription controls</span>
+            <span data-i18n>No behavioral tracking</span>
+        </div>
+    </footer>
+
+    <script>
+        /* Carry the bearer token across the subscription-control pages. */
+        (function () {
+            var token = new URLSearchParams(window.location.search).get("token");
+            if (!token) return;
+            document.querySelectorAll(
+                'a[href*="personalisation/"], a[href*="subscription-configuration/"], a[href*="unsubscribe/"]'
+            ).forEach(function (link) {
+                var url = new URL(link.getAttribute("href"), window.location.href);
+                url.searchParams.set("token", token);
+                link.setAttribute("href", url.toString());
+            });
+        })();
+    </script>
+
+    <script>
+        (function () {
+            const config = window.CURIOSA_MANAGE_CONFIG || {};
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get("token");
+            const apiBaseUrl = (config.apiBaseUrl || "").trim().replace(/\/$/, "");
+            const curT = (text) => (window.curiosaT ? window.curiosaT(text) : text);
+
+            const INCOMPLETE_LINK_MESSAGE =
+                "This personalisation link is incomplete. Your personal access token is part of "
+                + "the manage-subscription link in your Curiosa email — please open this page by "
+                + "clicking that link.";
+
+            const themeOptions = document.getElementById("theme-options");
+            const positionInputs = document.querySelectorAll('input[name="decisions-position"]');
+            const previewImage = document.getElementById("preview-image");
+            const previewHaze = document.getElementById("preview-haze");
+            const statusMessage = document.getElementById("status-message");
+            const saveButton = document.getElementById("save-button");
+            const discardButton = document.getElementById("discard-button");
+            const actionBar = document.getElementById("action-bar");
+            const actionBarNote = document.getElementById("action-bar-note");
+
+            /* The saved selection. Everything that differs from it is unsaved. */
+            let baseline = null;
+            let busy = false;
+
+            function setStatus(message, tone) {
+                statusMessage.textContent = message || "";
+                statusMessage.classList.toggle("is-hidden", !message);
+                statusMessage.classList.toggle("note-warm", tone === "warm");
+                statusMessage.classList.toggle("note-success", tone === "success");
+            }
+
+            function showFatal(message) {
+                setStatus(message, "warm");
+                document.querySelector(".layout-grid").classList.add("is-hidden");
+                actionBar.classList.add("is-hidden");
+            }
+
+            function selection() {
+                const theme = themeOptions.querySelector("input:checked");
+                const position = document.querySelector('input[name="decisions-position"]:checked');
+                return {
+                    theme: theme ? theme.value : "default",
+                    decisions_position: position ? position.value : "before_news",
+                };
+            }
+
+            /* One image per combination, so only the chosen one is ever fetched.
+               A combination without an image falls back to the default rather
+               than showing a broken frame — which is what a theme added ahead of
+               its preview looks like. */
+            function updatePreview() {
+                const chosen = selection();
+                const src = "/theme-" + chosen.theme + "-" + chosen.decisions_position + ".webp";
+                if (previewImage.getAttribute("src") === src) return;
+                const probe = new Image();
+                probe.onload = function () {
+                    previewImage.src = src;
+                    previewHaze.src = src;
+                };
+                probe.onerror = function () {
+                    const fallback = "/theme-default-" + chosen.decisions_position + ".webp";
+                    previewImage.src = fallback;
+                    previewHaze.src = fallback;
+                };
+                probe.src = src;
+            }
+
+            function isDirty() {
+                if (!baseline) return false;
+                const chosen = selection();
+                return chosen.theme !== baseline.theme
+                    || chosen.decisions_position !== baseline.decisions_position;
+            }
+
+            function updateActionBar() {
+                const dirty = isDirty();
+                actionBar.classList.toggle("is-dirty", dirty);
+                discardButton.classList.toggle("is-hidden", !dirty);
+                saveButton.disabled = busy || !dirty;
+                actionBarNote.textContent = dirty
+                    ? curT("Unsaved changes.")
+                    : curT("All changes saved.");
+            }
+
+            function onChanged() {
+                updatePreview();
+                updateActionBar();
+            }
+
+            function renderThemeOptions(themes) {
+                themeOptions.textContent = "";
+                themes.forEach(function (theme) {
+                    const label = document.createElement("label");
+                    label.className = "mode-option";
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = "theme";
+                    input.value = theme.key;
+                    input.addEventListener("change", onChanged);
+
+                    const copy = document.createElement("span");
+                    const name = document.createElement("strong");
+                    name.textContent = curT(theme.label);
+                    copy.appendChild(name);
+                    if (theme.description) {
+                        const description = document.createElement("small");
+                        description.textContent = curT(theme.description);
+                        copy.appendChild(description);
+                    }
+
+                    label.appendChild(input);
+                    label.appendChild(copy);
+                    themeOptions.appendChild(label);
+                });
+            }
+
+            function applySelection(prefs) {
+                const chosen = prefs || {};
+                const themeInput = themeOptions.querySelector(
+                    'input[value="' + (chosen.theme || "default").replace(/"/g, "") + '"]'
+                ) || themeOptions.querySelector("input");
+                if (themeInput) themeInput.checked = true;
+
+                positionInputs.forEach(function (input) {
+                    input.checked = input.value === (chosen.decisions_position || "before_news");
+                });
+
+                baseline = selection();
+                updatePreview();
+                updateActionBar();
+            }
+
+            async function requestJson(url, options) {
+                const response = await fetch(url, options);
+                let payload = null;
+                try {
+                    payload = await response.json();
+                } catch (_error) {
+                    payload = null;
+                }
+                if (!response.ok) {
+                    throw new Error(payload && payload.error ? payload.error : "request_failed");
+                }
+                return payload;
+            }
+
+            async function load() {
+                if (!token) {
+                    showFatal(curT(INCOMPLETE_LINK_MESSAGE));
+                    return;
+                }
+                if (!apiBaseUrl) {
+                    showFatal("Personalisation API base URL is not configured.");
+                    return;
+                }
+
+                setStatus(curT("Loading your layout..."));
+                try {
+                    const payload = await requestJson(
+                        apiBaseUrl + "?token=" + encodeURIComponent(token),
+                        { method: "GET", headers: { Accept: "application/json" } },
+                    );
+                    renderThemeOptions(payload.themes || []);
+                    applySelection(payload.layout_prefs);
+                    setStatus("");
+                } catch (error) {
+                    const code = error instanceof Error ? error.message : "request_failed";
+                    if (code === "invalid_token" || code === "missing_token") {
+                        showFatal(curT(INCOMPLETE_LINK_MESSAGE));
+                        return;
+                    }
+                    showFatal(curT("Temporary error. Please try again later or contact us at info@curiosa.news."));
+                }
+            }
+
+            async function save() {
+                if (busy || !isDirty()) return;
+                busy = true;
+                updateActionBar();
+                setStatus(curT("Saving..."));
+                try {
+                    const payload = await requestJson(
+                        apiBaseUrl + "?action=layout&token=" + encodeURIComponent(token),
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", Accept: "application/json" },
+                            body: JSON.stringify(selection()),
+                        },
+                    );
+                    applySelection(payload.layout_prefs);
+                    setStatus(curT("Your layout has been saved. It applies from the next issue."), "success");
+                } catch (_error) {
+                    setStatus(curT("Temporary error. Please try again later or contact us at info@curiosa.news."), "warm");
+                } finally {
+                    busy = false;
+                    updateActionBar();
+                }
+            }
+
+            positionInputs.forEach(function (input) {
+                input.addEventListener("change", onChanged);
+            });
+            saveButton.addEventListener("click", save);
+            discardButton.addEventListener("click", function () {
+                applySelection(baseline);
+                setStatus("");
+            });
+
+            updateActionBar();
+            load();
+        })();
+    </script>
+</body>
+</html>

@@ -9,6 +9,38 @@
     var DE = {
         // Shared subscription controls
         "Preferences": "Einstellungen",
+        "Personalisation": "Personalisierung",
+
+        // Personalisation page. The theme name and its one-line description
+        // arrive from the Edge Function, which generates them from
+        // core/email_themes.py — so a new theme needs an entry here and nothing
+        // else, and until it has one it simply shows in English.
+        "Choose how your briefing looks": "Wählen Sie, wie Ihr Briefing aussieht",
+        "The stories and the ranking stay the same. What changes is how a card is drawn and where the fines block sits.":
+            "Die Meldungen und ihre Reihenfolge bleiben gleich. Es ändert sich, wie eine Karte gezeichnet wird und wo der Bußgeld-Block steht.",
+        "Card layout": "Kartenlayout",
+        "How much weight each story gets.": "Wie viel Gewicht jede Meldung bekommt.",
+        "Standard": "Standard",
+        "Every story in one card size, each with its recommendation.":
+            "Jede Meldung in einer Kartengröße, jeweils mit Handlungsempfehlung.",
+        "Priority": "Priorität",
+        "Top-band stories lead with a badge and keep their recommendation; the rest read as headlines.":
+            "Meldungen der höchsten Stufe führen mit einer Plakette und behalten ihre Empfehlung; der Rest liest sich als Schlagzeile.",
+        "Decisions & fines": "Entscheidungen & Bußgelder",
+        "Where the block of decisions and fines sits in the issue.":
+            "Wo der Block mit Entscheidungen und Bußgeldern in der Ausgabe steht.",
+        "Before the news": "Vor den Nachrichten",
+        "The issue opens with the decisions.": "Die Ausgabe beginnt mit den Entscheidungen.",
+        "After the news": "Nach den Nachrichten",
+        "The news leads and the decisions follow.": "Die Nachrichten führen, die Entscheidungen folgen.",
+        "Preview": "Vorschau",
+        "A sample issue rendered by the same code that sends yours — not your own latest briefing.":
+            "Eine Beispielausgabe, gerendert vom selben Code, der Ihre verschickt — nicht Ihr eigenes letztes Briefing.",
+        "Loading your layout...": "Ihr Layout wird geladen ...",
+        "Your layout has been saved. It applies from the next issue.":
+            "Ihr Layout wurde gespeichert. Es gilt ab der nächsten Ausgabe.",
+        "This personalisation link is incomplete. Your personal access token is part of the manage-subscription link in your Curiosa email — please open this page by clicking that link.":
+            "Dieser Personalisierungs-Link ist unvollständig. Ihr persönliches Zugriffs-Token ist Teil des Verwaltungslinks in Ihrer Curiosa-E-Mail — bitte öffnen Sie diese Seite über diesen Link.",
         "Unsubscribe": "Abmelden",
         "Subscription controls": "Abo-Verwaltung",
         "No behavioral tracking": "Kein verhaltensbasiertes Tracking",
