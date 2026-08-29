@@ -199,20 +199,29 @@
             /* One image per combination, so only the chosen one is ever fetched.
                A combination without an image falls back to the default rather
                than showing a broken frame — which is what a theme added ahead of
-               its preview looks like. */
+               its preview looks like.
+
+               Each probe carries the request it belongs to, because two quick
+               clicks start two loads and the slower one can finish last: without
+               the check the preview settles on whichever image the network
+               happened to return second, not on what is selected. */
+            let previewRequest = 0;
+
             function updatePreview() {
                 const chosen = selection();
                 const src = "/theme-" + chosen.theme + "-" + chosen.decisions_position + ".webp";
                 if (previewImage.getAttribute("src") === src) return;
-                const probe = new Image();
-                probe.onload = function () {
-                    previewImage.src = src;
-                    previewHaze.src = src;
+
+                const request = ++previewRequest;
+                const show = function (url) {
+                    if (request !== previewRequest) return;
+                    previewImage.src = url;
+                    previewHaze.src = url;
                 };
+                const probe = new Image();
+                probe.onload = function () { show(src); };
                 probe.onerror = function () {
-                    const fallback = "/theme-default-" + chosen.decisions_position + ".webp";
-                    previewImage.src = fallback;
-                    previewHaze.src = fallback;
+                    show("/theme-default-" + chosen.decisions_position + ".webp");
                 };
                 probe.src = src;
             }
@@ -230,7 +239,7 @@
                 discardButton.classList.toggle("is-hidden", !dirty);
                 saveButton.disabled = busy || !dirty;
                 actionBarNote.textContent = dirty
-                    ? curT("Unsaved changes.")
+                    ? curT("You have unsaved changes.")
                     : curT("All changes saved.");
             }
 
@@ -330,7 +339,7 @@
                 if (busy || !isDirty()) return;
                 busy = true;
                 updateActionBar();
-                setStatus(curT("Saving..."));
+                setStatus(curT("Saving your changes..."));
                 try {
                     const payload = await requestJson(
                         apiBaseUrl + "?action=layout&token=" + encodeURIComponent(token),
