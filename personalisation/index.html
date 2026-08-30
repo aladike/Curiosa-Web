@@ -99,10 +99,10 @@
                         <h2 data-i18n>Preview</h2>
                     </div>
                     <div class="preview-sheet">
-                        <img id="preview-image" class="preview-page" src="/theme-default-before_news.webp"
-                             width="1360" height="3720" alt="" decoding="async">
-                        <img id="preview-haze" class="preview-page preview-page--haze" src="/theme-default-before_news.webp"
-                             width="1360" height="3720" alt="" aria-hidden="true" decoding="async">
+                        <img id="preview-image" class="preview-page" src="/theme-default-before_news-standard.webp"
+                             width="1360" height="4607" alt="" decoding="async">
+                        <img id="preview-haze" class="preview-page preview-page--haze" src="/theme-default-before_news-standard.webp"
+                             width="1360" height="4607" alt="" aria-hidden="true" decoding="async">
                     </div>
                     <p class="preview-note" data-i18n>
                         A sample issue rendered by the same code that sends yours — not your
@@ -225,7 +225,15 @@
 
             function updatePreview() {
                 const chosen = selection();
-                const src = "/theme-" + chosen.theme + "-" + chosen.decisions_position + ".webp";
+                /* Radar is part of the filename because it is the one control
+                   whose effect is in the story list rather than in the chrome:
+                   a sheet that ignored it would show a shape the choice does
+                   not produce. Each sheet is cut to its own length, so a more
+                   compact level visibly shortens the preview — which is the
+                   thing being chosen. */
+                const radar = chosen.radar_level || "standard";
+                const src = "/theme-" + chosen.theme + "-" + chosen.decisions_position
+                    + "-" + radar + ".webp";
                 if (previewImage.getAttribute("src") === src) return;
 
                 const request = ++previewRequest;
@@ -237,7 +245,7 @@
                 const probe = new Image();
                 probe.onload = function () { show(src); };
                 probe.onerror = function () {
-                    show("/theme-default-" + chosen.decisions_position + ".webp");
+                    show("/theme-default-" + chosen.decisions_position + "-" + radar + ".webp");
                 };
                 probe.src = src;
             }
