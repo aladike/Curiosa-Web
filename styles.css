@@ -742,6 +742,19 @@ h1 {
     color: var(--text);
 }
 
+/* The share of an issue a Radar level compacts. Quiet and monospaced so the
+   four numbers line up down the group and read as a scale, not as a claim. */
+.mode-option__share {
+    float: right;
+    margin-left: 10px;
+    font-family: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
 .mode-option small {
     display: block;
     color: var(--muted);
