@@ -83,6 +83,14 @@
                         </label>
                     </div>
                 </section>
+
+                <section id="radar-card" class="card is-hidden">
+                    <div class="card-heading">
+                        <h2 data-i18n>Radar</h2>
+                        <p data-i18n>How much of the issue is shortened to a one-line list at the end.</p>
+                    </div>
+                    <div id="radar-options" class="mode-switch" role="radiogroup" aria-label="Radar"></div>
+                </section>
             </div>
 
             <aside class="preview-rail">
@@ -92,9 +100,9 @@
                     </div>
                     <div class="preview-sheet">
                         <img id="preview-image" class="preview-page" src="/theme-default-before_news.webp"
-                             width="1360" height="1960" alt="" decoding="async">
+                             width="1360" height="3720" alt="" decoding="async">
                         <img id="preview-haze" class="preview-page preview-page--haze" src="/theme-default-before_news.webp"
-                             width="1360" height="1960" alt="" aria-hidden="true" decoding="async">
+                             width="1360" height="3720" alt="" aria-hidden="true" decoding="async">
                     </div>
                     <p class="preview-note" data-i18n>
                         A sample issue rendered by the same code that sends yours — not your
@@ -161,6 +169,8 @@
                 + "clicking that link.";
 
             const themeOptions = document.getElementById("theme-options");
+            const radarOptions = document.getElementById("radar-options");
+            const radarCard = document.getElementById("radar-card");
             const positionInputs = document.querySelectorAll('input[name="decisions-position"]');
             const previewImage = document.getElementById("preview-image");
             const previewHaze = document.getElementById("preview-haze");
@@ -190,10 +200,16 @@
             function selection() {
                 const theme = themeOptions.querySelector("input:checked");
                 const position = document.querySelector('input[name="decisions-position"]:checked');
-                return {
+                const radar = radarOptions.querySelector("input:checked");
+                const chosen = {
                     theme: theme ? theme.value : "default",
                     decisions_position: position ? position.value : "before_news",
                 };
+                /* Only send what the page actually showed. With no Radar group
+                   rendered there is no choice to report, and posting a default
+                   would overwrite a level picked before this page was updated. */
+                if (radar) chosen.radar_level = radar.value;
+                return chosen;
             }
 
             /* One image per combination, so only the chosen one is ever fetched.
@@ -230,7 +246,8 @@
                 if (!baseline) return false;
                 const chosen = selection();
                 return chosen.theme !== baseline.theme
-                    || chosen.decisions_position !== baseline.decisions_position;
+                    || chosen.decisions_position !== baseline.decisions_position
+                    || chosen.radar_level !== baseline.radar_level;
             }
 
             function updateActionBar() {
@@ -248,31 +265,42 @@
                 updateActionBar();
             }
 
-            function renderThemeOptions(themes) {
-                themeOptions.textContent = "";
-                themes.forEach(function (theme) {
+            /* Both radiogroups come from the API in the same shape — key, label,
+               description — so they are built by one function. A second copy of
+               this would be the place the two drift apart. */
+            function renderOptions(container, groupName, choices) {
+                container.textContent = "";
+                (choices || []).forEach(function (choice) {
                     const label = document.createElement("label");
                     label.className = "mode-option";
 
                     const input = document.createElement("input");
                     input.type = "radio";
-                    input.name = "theme";
-                    input.value = theme.key;
+                    input.name = groupName;
+                    input.value = choice.key;
                     input.addEventListener("change", onChanged);
 
                     const copy = document.createElement("span");
                     const name = document.createElement("strong");
-                    name.textContent = curT(theme.label);
+                    name.textContent = curT(choice.label);
+                    /* The share is a measured number, not a translated string:
+                       it goes in as it comes from the API. */
+                    if (choice.share) {
+                        const share = document.createElement("span");
+                        share.className = "mode-option__share";
+                        share.textContent = choice.share;
+                        name.appendChild(share);
+                    }
                     copy.appendChild(name);
-                    if (theme.description) {
+                    if (choice.description) {
                         const description = document.createElement("small");
-                        description.textContent = curT(theme.description);
+                        description.textContent = curT(choice.description);
                         copy.appendChild(description);
                     }
 
                     label.appendChild(input);
                     label.appendChild(copy);
-                    themeOptions.appendChild(label);
+                    container.appendChild(label);
                 });
             }
 
@@ -286,6 +314,12 @@
                 positionInputs.forEach(function (input) {
                     input.checked = input.value === (chosen.decisions_position || "before_news");
                 });
+
+                const radarInput = radarOptions.querySelector(
+                    'input[value="' + (chosen.radar_level || "standard").replace(/"/g, "") + '"]'
+                ) || radarOptions.querySelector('input[value="standard"]')
+                    || radarOptions.querySelector("input");
+                if (radarInput) radarInput.checked = true;
 
                 baseline = selection();
                 updatePreview();
@@ -322,7 +356,15 @@
                         apiBaseUrl + "?token=" + encodeURIComponent(token),
                         { method: "GET", headers: { Accept: "application/json" } },
                     );
-                    renderThemeOptions(payload.themes || []);
+                    renderOptions(themeOptions, "theme", payload.themes);
+                    /* The card stays hidden until the API offers the levels, so
+                       a page deployed ahead of the function shows one setting
+                       fewer rather than an empty box. Saving is unaffected:
+                       an unknown key in the body is ignored, not rejected. */
+                    renderOptions(radarOptions, "radar-level", payload.radar_levels);
+                    radarCard.classList.toggle(
+                        "is-hidden", !(payload.radar_levels && payload.radar_levels.length)
+                    );
                     applySelection(payload.layout_prefs);
                     setStatus("");
                 } catch (error) {
