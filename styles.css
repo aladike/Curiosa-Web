@@ -755,6 +755,37 @@ h1 {
     white-space: nowrap;
 }
 
+/* One stripe per story of the sample issue, in ranked order. Filled while a
+   story keeps its card, hollow once the chosen level compacts it — so the strip
+   answers "which one" at a glance, which the screenshot beside it can only
+   answer by being read. */
+.radar-strip {
+    display: flex;
+    gap: 3px;
+    margin-top: 14px;
+}
+
+.radar-stripe {
+    flex: 1 1 0;
+    height: 22px;
+    border-radius: 2px;
+    background: var(--link);
+    opacity: 0.85;
+    transition: background 0.16s ease, opacity 0.16s ease;
+}
+
+.radar-stripe.is-compacted {
+    background: var(--line-strong);
+    opacity: 0.55;
+}
+
+.radar-strip__note {
+    margin: 7px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
 .mode-option small {
     display: block;
     color: var(--muted);
@@ -1122,32 +1153,23 @@ h1 {
     box-shadow: var(--shadow-card);
 }
 
-/* The same treatment the root page gives its samples: a sharp copy under a
-   blurred one, and the sheet itself masked away at the bottom edge, so the
-   issue dissolves mid-block instead of ending on a hard cut. */
+/* No fade and no blurred overlay any more. Both existed because the sheet was
+   an excerpt cut at a fixed height, and dissolving the bottom was how a cut
+   mid-issue read as intentional. The sheet is now cut to its own content, so
+   the issue really does end where the image does — and the bottom fifth, which
+   the blur used to cover, is exactly where the Radar section sits. Hazing over
+   the one part the control changes made the control impossible to judge. */
 .preview-sheet {
     position: relative;
     overflow: hidden;
-    border-radius: 8px 8px 0 0;
+    border-radius: 8px;
     box-shadow: inset 0 0 0 1px var(--line-soft);
-    -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
-    mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
 }
 
 .preview-page {
     display: block;
     width: 100%;
     height: auto;
-}
-
-.preview-page--haze {
-    position: absolute;
-    top: 0;
-    left: 0;
-    filter: blur(6px);
-    -webkit-mask-image: linear-gradient(180deg, transparent 78%, #000 97%);
-    mask-image: linear-gradient(180deg, transparent 78%, #000 97%);
-    pointer-events: none;
 }
 
 .preview-note {

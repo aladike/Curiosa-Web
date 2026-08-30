@@ -90,6 +90,8 @@
                         <p data-i18n>How much of the issue is shortened to a one-line list at the end.</p>
                     </div>
                     <div id="radar-options" class="mode-switch" role="radiogroup" aria-label="Radar"></div>
+                    <div id="radar-strip" class="radar-strip is-hidden" aria-hidden="true"></div>
+                    <p id="radar-strip-note" class="radar-strip__note is-hidden"></p>
                 </section>
             </div>
 
@@ -101,8 +103,6 @@
                     <div class="preview-sheet">
                         <img id="preview-image" class="preview-page" src="/theme-default-before_news-standard.webp"
                              width="1360" height="4607" alt="" decoding="async">
-                        <img id="preview-haze" class="preview-page preview-page--haze" src="/theme-default-before_news-standard.webp"
-                             width="1360" height="4607" alt="" aria-hidden="true" decoding="async">
                     </div>
                     <p class="preview-note" data-i18n>
                         A sample issue rendered by the same code that sends yours — not your
@@ -171,9 +171,15 @@
             const themeOptions = document.getElementById("theme-options");
             const radarOptions = document.getElementById("radar-options");
             const radarCard = document.getElementById("radar-card");
+            const radarStrip = document.getElementById("radar-strip");
+            const radarStripNote = document.getElementById("radar-strip-note");
+            /* Story-by-story, in the order the issue ranks them, with the first
+               level that compacts each. Comes from the API so it is derived from
+               the same render the preview images are, not written twice. */
+            let radarSample = [];
+            const RADAR_ORDER = ["off", "strict", "standard", "wide"];
             const positionInputs = document.querySelectorAll('input[name="decisions-position"]');
             const previewImage = document.getElementById("preview-image");
-            const previewHaze = document.getElementById("preview-haze");
             const statusMessage = document.getElementById("status-message");
             const saveButton = document.getElementById("save-button");
             const discardButton = document.getElementById("discard-button");
@@ -240,7 +246,6 @@
                 const show = function (url) {
                     if (request !== previewRequest) return;
                     previewImage.src = url;
-                    previewHaze.src = url;
                 };
                 const probe = new Image();
                 probe.onload = function () { show(src); };
@@ -268,8 +273,39 @@
                     : curT("All changes saved.");
             }
 
+            /* One stripe per story, in ranked order: filled while it keeps a
+               card, hollow once the chosen level compacts it. The picture beside
+               this shows the same thing at full size; the strip is what answers
+               "which one" without reading the screenshot. */
+            function updateStrip() {
+                const level = selection().radar_level || "standard";
+                const reach = RADAR_ORDER.indexOf(level);
+                const hasSample = radarSample.length > 0;
+                radarStrip.classList.toggle("is-hidden", !hasSample);
+                radarStripNote.classList.toggle("is-hidden", !hasSample);
+                if (!hasSample) return;
+
+                radarStrip.textContent = "";
+                let compacted = 0;
+                radarSample.forEach(function (story) {
+                    const at = story.moves_at ? RADAR_ORDER.indexOf(story.moves_at) : -1;
+                    const inRadar = at > 0 && reach >= at;
+                    if (inRadar) compacted += 1;
+
+                    const stripe = document.createElement("span");
+                    stripe.className = "radar-stripe" + (inRadar ? " is-compacted" : "");
+                    stripe.title = story.source + " — " + story.title;
+                    radarStrip.appendChild(stripe);
+                });
+
+                const cards = radarSample.length - compacted;
+                radarStripNote.textContent = curT("Sample issue:") + " "
+                    + cards + " " + curT("cards") + " · " + compacted + " " + curT("in the list");
+            }
+
             function onChanged() {
                 updatePreview();
+                updateStrip();
                 updateActionBar();
             }
 
@@ -331,6 +367,7 @@
 
                 baseline = selection();
                 updatePreview();
+                updateStrip();
                 updateActionBar();
             }
 
@@ -370,6 +407,7 @@
                        fewer rather than an empty box. Saving is unaffected:
                        an unknown key in the body is ignored, not rejected. */
                     renderOptions(radarOptions, "radar-level", payload.radar_levels);
+                    radarSample = payload.radar_sample || [];
                     radarCard.classList.toggle(
                         "is-hidden", !(payload.radar_levels && payload.radar_levels.length)
                     );
