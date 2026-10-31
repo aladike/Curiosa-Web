@@ -33,6 +33,19 @@
         "The issue opens with the decisions.": "Die Ausgabe beginnt mit den Entscheidungen.",
         "After the news": "Nach den Nachrichten",
         "The news leads and the decisions follow.": "Die Nachrichten führen, die Entscheidungen folgen.",
+        // Radar levels: names and lines arrive from the Edge Function too.
+        "Off": "Aus",
+        "Every story gets a full card. The longest briefing.":
+            "Jede Meldung bekommt eine vollständige Karte. Das längste Briefing.",
+        "Minimal": "Minimal",
+        "Only stories with no data-protection angle at all move to the short list.":
+            "Nur Meldungen ganz ohne Datenschutzbezug wandern in die Kurzliste.",
+        "Balanced": "Ausgewogen",
+        "What the analysis explicitly marks as not relevant for a DPO is listed briefly at the end.":
+            "Was die Analyse ausdrücklich als nicht DSB-relevant einstuft, steht kurz am Ende.",
+        "Compact": "Kompakt",
+        "Stories at the edge of relevance are shortened too. The shortest briefing.":
+            "Auch Meldungen am Rand der Relevanz werden gekürzt. Das knappste Briefing.",
         "Preview": "Vorschau",
         "A sample issue rendered by the same code that sends yours — not your own latest briefing.":
             "Eine Beispielausgabe, gerendert vom selben Code, der Ihre verschickt — nicht Ihr eigenes letztes Briefing.",

@@ -101,7 +101,7 @@
                         <h2 data-i18n>Preview</h2>
                     </div>
                     <div class="preview-sheet">
-                        <img id="preview-image" class="preview-page" src="/theme-default-before_news-standard.webp"
+                        <img id="preview-image" class="preview-page" src="/theme-default-before_news-strict.webp"
                              width="1360" height="4607" alt="" decoding="async">
                     </div>
                     <p class="preview-note" data-i18n>
@@ -237,7 +237,7 @@
                    not produce. Each sheet is cut to its own length, so a more
                    compact level visibly shortens the preview — which is the
                    thing being chosen. */
-                const radar = chosen.radar_level || "standard";
+                const radar = chosen.radar_level || "strict";
                 const src = "/theme-" + chosen.theme + "-" + chosen.decisions_position
                     + "-" + radar + ".webp";
                 if (previewImage.getAttribute("src") === src) return;
@@ -278,7 +278,7 @@
                this shows the same thing at full size; the strip is what answers
                "which one" without reading the screenshot. */
             function updateStrip() {
-                const level = selection().radar_level || "standard";
+                const level = selection().radar_level || "strict";
                 const reach = RADAR_ORDER.indexOf(level);
                 const hasSample = radarSample.length > 0;
                 radarStrip.classList.toggle("is-hidden", !hasSample);
@@ -360,8 +360,8 @@
                 });
 
                 const radarInput = radarOptions.querySelector(
-                    'input[value="' + (chosen.radar_level || "standard").replace(/"/g, "") + '"]'
-                ) || radarOptions.querySelector('input[value="standard"]')
+                    'input[value="' + (chosen.radar_level || "strict").replace(/"/g, "") + '"]'
+                ) || radarOptions.querySelector('input[value="strict"]')
                     || radarOptions.querySelector("input");
                 if (radarInput) radarInput.checked = true;
 
