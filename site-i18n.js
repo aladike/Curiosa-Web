@@ -19,13 +19,13 @@
         "The stories and the ranking stay the same. What changes is how a card is drawn and where the fines block sits.":
             "Die Meldungen und ihre Reihenfolge bleiben gleich. Es ändert sich, wie eine Karte gezeichnet wird und wo der Bußgeld-Block steht.",
         "Card layout": "Kartenlayout",
-        "How much weight each story gets.": "Wie viel Gewicht jede Meldung bekommt.",
+        "How each story is set on the page.": "Wie jede Meldung auf der Seite gesetzt ist.",
         "Standard": "Standard",
         "Every story in one card size, each with its recommendation.":
             "Jede Meldung in einer Kartengröße, jeweils mit Handlungsempfehlung.",
-        "Priority": "Priorität",
-        "Top-band stories lead with a badge and keep their recommendation; the rest read as headlines.":
-            "Meldungen der höchsten Stufe führen mit einer Plakette und behalten ihre Empfehlung; der Rest liest sich als Schlagzeile.",
+        "Editorial": "Editorial",
+        "The same stories and recommendations, set more quietly: a dark header, a relevance bar, fines in a column and plain cards.":
+            "Dieselben Meldungen und Empfehlungen, ruhiger gesetzt: dunkler Kopf, Relevanzbalken, Bußgelder in einer Spalte und schlichte Karten.",
         "Decisions & fines": "Entscheidungen & Bußgelder",
         "Where the block of decisions and fines sits in the issue.":
             "Wo der Block mit Entscheidungen und Bußgeldern in der Ausgabe steht.",
