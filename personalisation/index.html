@@ -101,7 +101,7 @@
                         <h2 data-i18n>Preview</h2>
                     </div>
                     <div class="preview-sheet">
-                        <img id="preview-image" class="preview-page" src="/theme-default-before_news-strict.webp"
+                        <img id="preview-image" class="preview-page" src="/theme-editorial-before_news-strict.webp"
                              width="1360" height="4607" alt="" decoding="async">
                     </div>
                     <p class="preview-note" data-i18n>
@@ -208,7 +208,7 @@
                 const position = document.querySelector('input[name="decisions-position"]:checked');
                 const radar = radarOptions.querySelector("input:checked");
                 const chosen = {
-                    theme: theme ? theme.value : "default",
+                    theme: theme ? theme.value : "editorial",
                     decisions_position: position ? position.value : "before_news",
                 };
                 /* Only send what the page actually showed. With no Radar group
@@ -250,7 +250,7 @@
                 const probe = new Image();
                 probe.onload = function () { show(src); };
                 probe.onerror = function () {
-                    show("/theme-default-" + chosen.decisions_position + "-" + radar + ".webp");
+                    show("/theme-editorial-" + chosen.decisions_position + "-" + radar + ".webp");
                 };
                 probe.src = src;
             }
@@ -351,7 +351,7 @@
             function applySelection(prefs) {
                 const chosen = prefs || {};
                 const themeInput = themeOptions.querySelector(
-                    'input[value="' + (chosen.theme || "default").replace(/"/g, "") + '"]'
+                    'input[value="' + (chosen.theme || "editorial").replace(/"/g, "") + '"]'
                 ) || themeOptions.querySelector("input");
                 if (themeInput) themeInput.checked = true;
 

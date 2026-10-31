@@ -20,12 +20,12 @@
             "Die Meldungen und ihre Reihenfolge bleiben gleich. Es ändert sich, wie eine Karte gezeichnet wird und wo der Bußgeld-Block steht.",
         "Card layout": "Kartenlayout",
         "How each story is set on the page.": "Wie jede Meldung auf der Seite gesetzt ist.",
-        "Standard": "Standard",
-        "Every story in one card size, each with its recommendation.":
-            "Jede Meldung in einer Kartengröße, jeweils mit Handlungsempfehlung.",
         "Editorial": "Editorial",
-        "The same stories and recommendations, set more quietly: a dark header, a relevance bar, fines in a column and plain cards.":
-            "Dieselben Meldungen und Empfehlungen, ruhiger gesetzt: dunkler Kopf, Relevanzbalken, Bußgelder in einer Spalte und schlichte Karten.",
+        "Every story with its recommendation, set calmly: a dark header with a relevance bar, the decisions in one card and plain cards.":
+            "Jede Meldung mit ihrer Empfehlung, ruhig gesetzt: dunkler Kopf mit Relevanzbalken, die Entscheidungen in einer Karte und schlichte Karten.",
+        "Classic": "Klassisch",
+        "The earlier layout: a coloured rail on every card, topic columns in the header and the decisions in a framed box.":
+            "Das bisherige Layout: eine farbige Leiste an jeder Karte, Themenspalten im Kopf und die Entscheidungen in einem Rahmen.",
         "Decisions & fines": "Entscheidungen & Bußgelder",
         "Where the block of decisions and fines sits in the issue.":
             "Wo der Block mit Entscheidungen und Bußgeldern in der Ausgabe steht.",
