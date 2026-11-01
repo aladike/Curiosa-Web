@@ -24,8 +24,11 @@
         "Every story with its recommendation, set calmly: a dark header with a relevance bar, the decisions in one card and plain cards.":
             "Jede Meldung mit ihrer Empfehlung, ruhig gesetzt: dunkler Kopf mit Relevanzbalken, die Entscheidungen in einer Karte und schlichte Karten.",
         "Classic": "Klassisch",
+        "The earlier layout: a coloured rail on every card and the decisions in a framed box.":
+            "Das bisherige Layout: eine farbige Leiste an jeder Karte und die Entscheidungen in einem Rahmen.",
+        // Accept the earlier API description until the refreshed catalog is deployed.
         "The earlier layout: a coloured rail on every card, topic columns in the header and the decisions in a framed box.":
-            "Das bisherige Layout: eine farbige Leiste an jeder Karte, Themenspalten im Kopf und die Entscheidungen in einem Rahmen.",
+            "Das bisherige Layout: eine farbige Leiste an jeder Karte und die Entscheidungen in einem Rahmen.",
         "Decisions & fines": "Entscheidungen & Bußgelder",
         "Where the block of decisions and fines sits in the issue.":
             "Wo der Block mit Entscheidungen und Bußgeldern in der Ausgabe steht.",

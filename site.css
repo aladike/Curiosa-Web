@@ -541,19 +541,19 @@ body.home-page::before {
 
 /* Both sheets fade over roughly the same 150 px of their own capture, with
    the haze starting ~210 px up — the percentages differ only because the two
-   captures are not the same height (daily 2194, weekly 1274 CSS px). The
+   captures are not the same height (daily 1886.5, weekly 1200.5 CSS px). The
    daily numbers are also what keeps the Radar section on the readable side of
    the fade, so re-check them if the sample images are regenerated at a
    different length. */
 .sample--daily {
-    --sheet-fade: 93%;
-    --haze-in: 90%;
+    --sheet-fade: 92%;
+    --haze-in: 89%;
     --haze-full: 99%;
 }
 
 .sample--weekly {
-    --sheet-fade: 88%;
-    --haze-in: 83%;
+    --sheet-fade: 87.5%;
+    --haze-in: 82.5%;
     --haze-full: 98%;
 }
 
